@@ -24,10 +24,10 @@ EXAMPLE:{"section":"wifi","setting":[{"key": "clientid", "value": "ABC123", "lin
 
 Create a new settings line or settings section after the line provided in the URI or at the end of the section. Lines that already exist in the section will not be changed and an error will be returned. Return a new section or existing section with new lines.
 
+```
 /cgi-bin/settings?post=line[&line=month]
 /cgi-bin/settings?post=section[&section=clock]
-
-
+```
 
 
 # Donation
