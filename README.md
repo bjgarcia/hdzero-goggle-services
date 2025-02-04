@@ -11,10 +11,12 @@ Methods return current line numbers but be careful line numbers are not part of 
 
 ## Get Methods
 
+```
 Get a line from a section by name or all lines from a section by name or all sections.
 /cgi-bin/settings?section=wifi&line=ap_ssid
 /cgi-bin/settings?section=wifi
 /cgi-bin/settings
+```
 
 EXAMPLE:{"section":"wifi","setting":[{"key": "clientid", "value": "ABC123", "line": "14"},{"key": "enable", "value": "false", "line": "15"},{"key": "mode", "value": "1", "line": "16"},{"key": "ap_ssid", "value": "HDZero", "line": "17"},{"key": "ap_passwd", "value": "divimath", "line": "18"},{"key": "sta_ssid", "value": "SSID", "line": "19"},{"key": "sta_passwd", "value": "abc123", "line": "20"},{"key": "dhcp", "value": "true", "line": "21"},{"key": "ip_addr", "value": "192.168.1.122", "line": "22"},{"key": "netmask", "value": "255.255.255.0", "line": "23"},{"key": "gateway", "value": "192.168.1.1", "line": "24"},{"key": "dns", "value": "192.168.1.1", "line": "25"},{"key": "rf_channel", "value": "6", "line": "26"},{"key": "root_pw", "value": "divimath", "line": "27"},{"key": "ssh", "value": "true", "line": "28"}]}
 
