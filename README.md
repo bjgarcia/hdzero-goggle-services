@@ -30,11 +30,10 @@ Create a new settings line or settings section after the line or section provide
 ```
 ## Put Methods
 
-Replaces all lines in a section. Return an error if the section does not exist. A section PUT will replace the section provided in the URI.
+Replaces all lines in a section. Return an error if the section does not exist.
 
 ```
 /cgi-bin/settings?put=line/
-/cgi-/cgi-bin/settings?put=section&section=section
 ```
 ## Patch Methods
 
