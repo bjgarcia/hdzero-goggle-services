@@ -5,7 +5,6 @@ A Web API that leverages SumolX's work on services for the HDZero goggles.
 ```
 WebUI
 Settings API
-SD Card API 
 ```
 ## Settings Api
 
