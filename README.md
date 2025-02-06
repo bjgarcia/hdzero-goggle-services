@@ -30,7 +30,7 @@ Create new lines or a new section after the line or section provided in the URI 
 ```
 ## Put Methods
 
-Replaces all lines in a section. Return an error if the section does not exist.
+Replaces all lines in a section with the lines passed as content. Return an error if the section does not exist.
 
 ```
 /cgi-bin/settings?put=line/
