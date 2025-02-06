@@ -1,12 +1,46 @@
+# Includes
+. ./constants
+
+# Returns content type
+utils_content_text()
+{
+  echo "Content-Type: text/html"
+  echo ""
+}
+
+# Returns content type
+utils_content_json()
+{
+  echo "Content-Type: application/json"
+  echo ""
+}
+
+# Return error code and message
+utils_print_error()
+{
+   echo "Content-Type: text/html; charset=utf-8"
+   echo "$1"
+   echo ""
+   echo "$2"
+}
+
 # Returns success on substring match 
 utils_has_string() {
-    str="$1"
-    sub="$2"
+    local str="$1"
+    local sub="$2"
     if [ "${str#*"$sub"}" != "$str" ]; then
         return 0
     else
         return 1
     fi
+}
+
+# Returns all lines of a posted data 
+utils_post_data(){
+   local -n arr_ref="$1"
+   while read ln; do
+      arr_ref+=("$ln")
+   done < <(./json.sh -l <<< $POST_DATA)
 }
 
 # Transfer binary file to client
