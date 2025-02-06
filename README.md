@@ -22,7 +22,7 @@ EXAMPLE:{"section":"wifi","setting":[{"key": "clientid", "value": "ABC123", "lin
 
 ## Post Methods
 
-Create a new settings line or settings section after the line or section provided in the URI or at the end of the section or file if no line or section is provided in the URI. Lines that already exist in the section will not be changed and an error will be returned indicating line already exist.
+Create new lines or a new section after the line or section provided in the URI or at the end of the section or file if no line or section is provided in the URI. Lines that already exist in the section will not be changed and an error will be returned indicating line already exist.
 
 ```
 /cgi-bin/settings?post=line[&line=month]
