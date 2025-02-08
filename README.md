@@ -64,27 +64,26 @@ EXAMPLE:
 Upload a new file 
 
 ```
-/cgi-bin/settings?post=file
+/cgi-bin/file?post=file
 ```
 ### Patch Methods
 
 Rename one or more 
 
 ```
-/cgi-bin/settings?patch=file
+/cgi-bin/file?patch=file
 ```
 ### Delete Methods
 
 Delete one or more
 
 ```
-/cgi-bin/settings?delete=file
-/cgi-bin/settings?delete=directory
+/cgi-bin/file?delete=file
+/cgi-bin/file?delete=directory
 ```
 
 
-
 ## Donation
-If you enjoyed this work or would like to see additional features and functionality added in the future please feel free to donate.
+If you appreciate this work or would like to see additional features and functionality added in the future please consider donating to support this project.
 
 [![paypal](https://www.paypalobjects.com/en_US/i/btn/btn_donate_LG.gif)](https://www.paypal.me/WillWorks341)
