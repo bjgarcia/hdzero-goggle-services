@@ -8,6 +8,7 @@ Methods return the effected section and effected lines of settings with current 
 WebUI
 Settings API
 ```
+
 ## Settings Api
 ### Get Methods
 
@@ -52,10 +53,10 @@ Delete one or more lines in a section. Returns the deleted lines. Throw error if
 ## File Api
 ### Get Methods
 
+Allow directory listing below the mount point only. Paths and filters are disassembled stripped and reassembled to prevent funny business. Example filter="filename.jpg", filter = "*.jpg", or filter="filename.*".  
+
 ```
-Get a line from a section by name or all lines from a section by name or all sections.
-/cgi-bin/settings?file=path
-/cgi-bin/settings?directory=path
+/cgi-bin/settings?directory=path[&filter=jpg]
 ```
 EXAMPLE:
 
