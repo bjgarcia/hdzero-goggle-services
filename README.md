@@ -56,7 +56,7 @@ Delete one or more lines in a section. Returns the deleted lines. Throw error if
 Allow directory listing below the mount point only. Paths and filters are disassembled stripped and reassembled to prevent funny business. Example filter="filename.jpg", filter = "*.jpg", or filter="filename.*".  
 
 ```
-/cgi-bin/settings?directory=path[&filter=jpg]
+/cgi-bin/file?list=path[&filter=jpg]
 ```
 EXAMPLE:
 
