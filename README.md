@@ -1,15 +1,12 @@
-# HDZGOGGLE Web Api
-A Web API that leverages SumolX's work on services for the HDZero goggles.  
+# HDZGOGGLE Web UI and API
+A Web UI and Web API that leverages SumolX's work on services for the HDZero goggles.  
 
 ## Services
-Methods return the effected section and effected lines of settings with current line numbers. Line numbers are not part of the file. They are just included for clarity. The first section of the settings file must not be changed. The goggle will reset the entire file if it is missing. The busybox web server only supports Get and Post methods, the other methods are represented in the URI. Only server errors return as primary in the reponse header, api errors are return as misscellaneous in the header and body of the response.
-
-```
-WebUI
-Settings API
-```
+The BusyBox Web Server only supports Get and Post methods. Other methods when needed are represented with the URI. Post methods return API errors as misscellaneous in the header and body of the response. Server errors return as primary in the reponse header.
 
 ## Settings Api
+The first section of the settings file must not be changed. The goggle will reset the entire file if it is missing.
+
 ### Get Methods
 
 ```
@@ -22,7 +19,7 @@ EXAMPLE:{"section":"wifi","setting_list":[{"key": "clientid", "value": "ABC123",
 
 ### Post Methods
 
-Create new lines or a new section after the line or section provided in the URI or at the end of the section or file if no line or section is provided in the URI. Lines that already exist in the section will not be changed and an error will be returned indicating line already exist.
+Create new lines or a new section after the line or section provided in the URI, at the end of the section, or end of file if no line or section is provided in the URI. If lines or section exists an error will be returned. Lines that don't exits will be created.
 
 ```
 /cgi-bin/settings?post=line[&line=month]
@@ -44,16 +41,18 @@ Change one or more line values in a section. Throw error if line or section does
 ```
 ### Delete Methods
 
-Delete one or more lines in a section. Returns the deleted lines. Throw error if does not exist.
+Delete one or more lines in a section. Throws error if a line does not exist.
 
 ```
 /cgi-bin/settings?delete=line
 ```
 
 ## File Api
+Allow directory listing below the mount point only.
+
 ### Get Methods
 
-Allow directory listing below the mount point only. Paths and filters are disassembled stripped and reassembled to prevent funny business. Example filter="filename.jpg", filter = "*.jpg", or filter="filename.*".  
+Paths and filters are disassembled, cleaned, and reassembled to prevent funny business. Example filter="filename*.jpg", filter = "*.jpg", or filter="filename.*".  
 
 ```
 /cgi-bin/file?list=path[&filter=jpg]
