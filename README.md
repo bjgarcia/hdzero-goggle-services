@@ -50,7 +50,7 @@ Delete one or more lines in a section. Throws error if a line does not exist.
 Allow access to the SD Card mount point only.
 
 ### Get Methods
-Paths and filters are disassembled, cleaned, and reassembled to prevent funny business. Example filter="filename*.jpg", filter = "*.jpg", or filter="filename.*" will work.  
+Paths and filters are cleaned to prevent funny business. Example filter="filename*.jpg", filter = "*.jpg", or filter="filename.*" will work.  
 
 ```
 /cgi-bin/file?list=path[&filter=jpg]
