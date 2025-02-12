@@ -2,7 +2,9 @@
 A Web UI and Web API that leverages SumolX's work on services for the HDZero goggles.  
 
 ## Services
-The BusyBox Web Server only supports Get and Post methods. Other methods, when needed are represented with the URI. Post methods return API errors as misscellaneous in the header and body of the response. Server errors return as primary in the reponse header.
+The BusyBox Web Server only supports Get and Post methods. Other methods, when needed are represented with the URI. Post methods return API errors as misscellaneous in the header and also in the body of the response. Server errors return as primary in the reponse header.
+
+{"api_errors":["This is one error","This is another error"]}
 
 ## Settings Api
 The first section of the settings file must not be changed. The goggle will reset the entire file if it is missing. Setting changes will be loaded on reboot.
@@ -47,10 +49,10 @@ Delete one or more lines in a section. Throws error if a line does not exist.
 ```
 
 ## File Api
-Allow access to the SD Card mount point only.
+Allow access to the SD Card mount point only. Do my best to prevent malicious code injection by scrubbing paths and limiting file names to a single period. Example name.extension.
 
 ### Get Methods
-Paths and filters are cleaned to prevent funny business. Example filter="filename*.jpg", filter = "*.jpg", or filter="filename.*" will work.  
+Only accepts simple globs with a single period. Example filter="filename*.jpg", filter = "*.jpg", or filter="filename.*" will work.  
 
 ```
 /cgi-bin/file?list=path[&filter=jpg]
@@ -72,7 +74,7 @@ Rename one or more
 ```
 
 ### Delete Methods
-Delete one or more
+Delete all files from a list directories or delete a list of files.
 
 ```
 /cgi-bin/file?delete=file
