@@ -2,15 +2,13 @@
 A Web UI and Web API that leverages SumolX's work on services for the HDZero goggles.  
 
 ## Services
-The BusyBox Web Server only supports Get and Post methods. Other methods, when needed are represented with the URI. Post methods return API errors as misscellaneous in the header and also in the body of the response. Server errors return as primary in the reponse header.
-
-{"api_errors":["This is one error","This is another error"]}
+The BusyBox Web Server only supports Get and Post methods. Other methods, when needed are represented with the URI. Server errors return as primary in the reponse header. Post methods return API errors as misscellaneous in the header. Errors and messages are returned as plain text in the body post response. 
 
 ## Settings Api
-The first section of the settings file must not be changed. The goggle will reset the entire file if it is missing. Setting changes will be loaded on reboot.
+The first section of the settings file must not be changed. The goggle will reset the entire file if it is missing. Setting changes will not be loaded until goggle reboot.
 
 ### Get Methods
-Get a line from a section by name or all lines from a section by name or all sections.
+Get a line from a section by name or all lines from a section by name or get one more more sections.
 
 ```
 /cgi-bin/settings?section=wifi&line=ap_ssid
@@ -49,7 +47,7 @@ Delete one or more lines in a section. Throws error if a line does not exist.
 ```
 
 ## File Api
-Allow access to the SD Card mount point only. Do my best to prevent malicious code injection by scrubbing paths and limiting file names to a single period. Example name.extension.
+API shouold operate on the SD Card mount point only. Anything outside of that should be prevented. Prevent malicious code by scrubbing paths and limiting file names. Keep it simple.
 
 ### Get Methods
 Only accepts simple globs with a single period. Example filter="filename*.jpg", filter = "*.jpg", or filter="filename.*" will work.  
@@ -66,8 +64,15 @@ Upload a new file
 /cgi-bin/file?post=file
 ```
 
+### Put Methods
+Copy a file
+
+```
+/cgi-bin/file?put=file
+```
+
 ### Patch Methods
-Rename one or more 
+Move or rename a file 
 
 ```
 /cgi-bin/file?patch=file
