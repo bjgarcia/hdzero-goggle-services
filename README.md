@@ -54,6 +54,8 @@ Only accepts simple globs with a single period. Example filter="filename*.jpg", 
 
 ```
 /cgi-bin/file?list=path[&filter=jpg]
+/cgi-bin/file?download=path
+/cgi-bin/file?format=path
 ```
 EXAMPLE:{ "info_list":[  {"name":"/mnt/extsd/movies/hdz_000.jpg","date":"2024-12-27", "time": "09:07:28.927907079", "offset": "-0500", "size": "6976", "permissions": "-rw-r--r--"}, {"name":"/mnt/extsd/movies/hdz_001.jpg","date":"2024-12-27", "time": "09:07:29.010907083", "offset": "-0500", "size": "6976", "permissions": "-rw-r--r--"}, {"name":"/mnt/extsd/movies/hdz_002.jpg","date":"2024-12-27", "time": "09:07:29.443907100", "offset": "-0500", "size": "11072", "permissions": "-rw-r--r--"}, {"name":"/mnt/extsd/movies/hdz_004.jpg","date":"2024-12-27", "time": "09:07:29.535907104", "offset": "-0500", "size": "6976", "permissions": "-rw-r--r--"}, {"name":"/mnt/extsd/movies/hdz_006.jpg","date":"2024-12-27", "time": "09:07:29.705907111", "offset": "-0500", "size": "6976", "permissions": "-rw-r--r--"} ] }
 
@@ -65,18 +67,20 @@ Upload a new file
 ```
 
 ### Put Methods
-Copy a file
+Copy one or more files. Takes an array of source and destination paths.
 
 ```
 /cgi-bin/file?put=file
 ```
+{"fr_to_list":[{"from_path":"/mnt/extsd/movies/save_this.jpg","to_path":"/mnt/extsd/movies/stars/save_this.jpg"},{"from_path":"/mnt/extsd/movies/stars/save_this.ts","to_path":"/mnt/extsd/movies/save_this.ts"}]}
 
 ### Patch Methods
-Move or rename a file 
+Move or rename one or more files. . Takes an array of source and destination paths. 
 
 ```
 /cgi-bin/file?patch=file
 ```
+{"fr_to_list":[{"from_path":"/mnt/extsd/movies/save_this.jpg","to_path":"/mnt/extsd/movies/stars/save_this.jpg"},{"from_path":"/mnt/extsd/movies/stars/save_this.ts","to_path":"/mnt/extsd/movies/save_this.ts"}]}
 
 ### Delete Methods
 Delete all files from a list directories or delete a list of files.
