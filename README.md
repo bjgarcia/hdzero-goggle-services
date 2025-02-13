@@ -92,6 +92,6 @@ Delete all files from a list directories or delete a list of files.
 
 
 ## Donation
-If you appreciate this work or would like to see additional features and functionality added in the future please consider donating to support this project.
+If you appreciate this work or find the functionality useful. Please consider donating to support this project.
 
 [![paypal](https://www.paypalobjects.com/en_US/i/btn/btn_donate_LG.gif)](https://www.paypal.me/WillWorks341)
