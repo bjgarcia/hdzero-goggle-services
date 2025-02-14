@@ -63,7 +63,7 @@ EXAMPLE:{ "info_list":[  {"name":"/mnt/extsd/movies/hdz_000.jpg","date":"2024-12
 Upload a new file 
 
 ```
-/cgi-bin/file?post=file
+/cgi-bin/file?post=upload
 ```
 
 ### Put Methods
