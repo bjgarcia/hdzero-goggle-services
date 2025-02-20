@@ -5,7 +5,7 @@ A Web UI and Web API that leverages SumolX's work on services for the HDZero gog
 The BusyBox Web Server only supports Get and Post methods. Other methods, when needed are represented with the URI. Server errors return as primary in the reponse header. Post methods return API errors as misscellaneous in the header. Errors and messages are returned as plain text in the body post response. 
 
 ## Settings Api
-The first section of the settings file must not be changed. The goggle will reset the entire file if it is missing. Changes to the Settings file be loaded on the next goggle reboot.
+The first section of the settings file must not be changed. The goggle will reset the entire file if it is missing. Changes to the Settings file are loaded on the next goggle reboot.
 
 ### Get Methods
 Get a line from a section by name or all lines from a section by section name or get all sections.
@@ -89,7 +89,6 @@ Delete all files from a list of directories or delete a list of files. Displays 
 /cgi-bin/file?delete=file
 /cgi-bin/file?delete=directory
 ```
-
 
 ## Donation
 If you appreciate this work or find the functionality useful. Please consider donating to support this project.
