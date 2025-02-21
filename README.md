@@ -56,7 +56,7 @@ Only accepts simple globs with a single period. Example filter="filename*.jpg", 
 /cgi-bin/file?list=path[&filter=jpg]
 /cgi-bin/file?download=path
 /cgi-bin/file?format=path
-/cgi-bin/file?free=path
+/cgi-bin/file?stat=path
 ```
 EXAMPLE:{ "info_list":[  {"name":"/mnt/extsd/movies/hdz_000.jpg","date":"2024-12-27", "time": "09:07:28.927907079", "offset": "-0500", "size": "6976", "permissions": "-rw-r--r--"}, {"name":"/mnt/extsd/movies/hdz_001.jpg","date":"2024-12-27", "time": "09:07:29.010907083", "offset": "-0500", "size": "6976", "permissions": "-rw-r--r--"}, {"name":"/mnt/extsd/movies/hdz_002.jpg","date":"2024-12-27", "time": "09:07:29.443907100", "offset": "-0500", "size": "11072", "permissions": "-rw-r--r--"}, {"name":"/mnt/extsd/movies/hdz_004.jpg","date":"2024-12-27", "time": "09:07:29.535907104", "offset": "-0500", "size": "6976", "permissions": "-rw-r--r--"}, {"name":"/mnt/extsd/movies/hdz_006.jpg","date":"2024-12-27", "time": "09:07:29.705907111", "offset": "-0500", "size": "6976", "permissions": "-rw-r--r--"} ] }
 
