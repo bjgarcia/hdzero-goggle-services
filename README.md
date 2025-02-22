@@ -55,7 +55,6 @@ Only accepts simple globs with a single period. Example filter="filename*.jpg", 
 ```
 /cgi-bin/file?list=path[&filter=jpg]
 /cgi-bin/file?download=path
-/cgi-bin/file?format=path
 /cgi-bin/file?stat=path
 ```
 EXAMPLE:
@@ -82,6 +81,7 @@ Move or rename one or more files. Takes an array of source and destination paths
 
 ```
 /cgi-bin/file?patch=file
+/cgi-bin/file?patch=format
 ```
 {"fr_to_list":[{"from_path":"/mnt/extsd/movies/save_this.jpg","to_path":"/mnt/extsd/movies/stars/save_this.jpg"},{"from_path":"/mnt/extsd/movies/stars/save_this.ts","to_path":"/mnt/extsd/movies/save_this.ts"}]}
 
