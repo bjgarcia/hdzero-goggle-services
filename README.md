@@ -69,10 +69,11 @@ Upload a new file. MultiPart/Form file limited to just under 25mg (24400 x 1024)
 ```
 
 ### Put Methods
-Copy one or more files. Takes an array of source and destination paths.
+Copy one or more files. Convert a file to mp4.Takes an array of source and destination paths.
 
 ```
 /cgi-bin/file?put=file
+/cgi-bin/file?put=convert
 ```
 {"fr_to_list":[{"from_path":"/mnt/extsd/movies/save_this.jpg","to_path":"/mnt/extsd/movies/stars/save_this.jpg"},{"from_path":"/mnt/extsd/movies/stars/save_this.ts","to_path":"/mnt/extsd/movies/save_this.ts"}]}
 
