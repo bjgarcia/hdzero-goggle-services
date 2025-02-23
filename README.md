@@ -69,7 +69,7 @@ Upload a new file. MultiPart/Form file limited to just under 25mg (24400 x 1024)
 ```
 
 ### Put Methods
-Copy one or more files. Convert a file to mp4 will require you to build ffmpeg with libx264. Takes an array of source and destination paths.
+Copy one or more files or convert a file to mp4. Takes an array of source and destination paths. Conversion uses ffmpeg with libx264 library built in. There is likley more work that could be done here. Resultng files are about 25% size of the orginal. Conversions overwrite and a .log file is created for each conversion with the output file name. Will add something that checks the log for completed conversion.
 
 ```
 /cgi-bin/file?put=file
