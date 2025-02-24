@@ -2,7 +2,7 @@
 A Web UI and Web API that leverages SumolX's work on services for the HDZero goggles.  
 
 ## Services
-The BusyBox Web Server only supports Get and Post methods. Other methods, when needed are represented with the URI. Server errors return as primary in the reponse header. Post methods return API errors as misscellaneous in the header. Errors and messages are returned as plain text in the body post response. 
+The BusyBox Web Server only supports Get and Post methods. Other methods, when needed are represented with the URI. Server errors return as primary in the reponse header. Post methods return API errors as misscellaneous in the header. Errors and messages are returned as plain text in the body post response. I will implement a login but security is going to be a issue becuase the web server currently does not support HTTPS. Any one with access to your new work could gain access to your goggle. 
 
 ## Settings Api
 The first section of the settings file must not be changed. The goggle will reset the entire file if it is missing. Changes to the Settings file are loaded on the next goggle reboot.
@@ -50,7 +50,7 @@ Delete one or more lines in a section? Throws error if a line does not exist.
 API should operate on the SD Card mount point only. Anything outside of that should be prevented. Prevent malicious code by scrubbing paths and limiting file names. Keep it simple.
 
 ### Get Methods
-Only accepts simple globs with a single period. Example filter="filename*.jpg", filter = "*.jpg", or filter="filename.*" will work.  
+List will accepts simple globs and a single period extension. Example filter="filename*.jpg", filter = "*.jpg", or filter="filename.*" will work.  
 
 ```
 /cgi-bin/file?list=path[&filter=jpg]
