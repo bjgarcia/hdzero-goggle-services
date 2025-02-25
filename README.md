@@ -20,11 +20,14 @@ Get a line from a section by name or all lines from a section by section name or
 ```
 
 ### Post Methods
-Create new lines or a new section after the line or section provided in the URI, at the end of the section, or at the end of file if no line or section is provided in the URI. If lines or section exists an error will be returned. Lines that don't exits will be created in an existing section. Takes a JSON Section object with one or more Lines.
+Create new lines or a new section after the line or section provided in the URI, at the end of the section, or at the end of file if no line or section is provided in the URI. If lines or section exists an error will be returned. Lines that don't exits will be created in an existing section. Takes a JSON Section object with one or more Lines. Returns the inserted section.
 
 ```
 /cgi-bin/setting?post=line[&line=month]
-/cgi-bin/setting?post=section[&section=clock]
+/cgi-bin/setting?post=section
+/cgi-bin/setting?post=section&section=clock
+{"section":"birthday","setting":[{"key": "year", "value": "2024", "line": "57"},{"key": "month", "value": "04", "line": "58"},{"key": "day", "value": "24", "line": "59"}]}
+
 ```
 
 ### Put Methods
@@ -42,7 +45,7 @@ Change one or more line values in a section. Throw error if line or section does
 ```
 
 ### Delete Methods
-Delete one or more lines in a section? Throws error if a line does not exist.
+Delete one or more lines in a section? Throws error if a line does not exist. Returns the inserted section.
 
 ```
 /cgi-bin/setting?delete=line
