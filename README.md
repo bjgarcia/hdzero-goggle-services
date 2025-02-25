@@ -45,7 +45,7 @@ Change one or more line values in a section. Throw error if line or section does
 ```
 
 ### Delete Methods
-Delete one or more lines in a section? Throws error if a line does not exist. Returns the inserted section.
+Delete one or more lines in a section? Throws error if a line does not exist. Returns the delected section.
 
 ```
 /cgi-bin/setting?delete=line
