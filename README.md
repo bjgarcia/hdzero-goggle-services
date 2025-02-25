@@ -11,39 +11,39 @@ The first section of the settings file must not be changed. The goggle will rese
 Get a line from a section by name or all lines from a section by section name or get all sections.
 
 ```
-/cgi-bin/settings?section=wifi&line=ap_ssid
-/cgi-bin/settings?section=wifi
-/cgi-bin/settings
+/cgi-bin/setting?section=wifi&line=ap_ssid
+/cgi-bin/setting?section=wifi
+/cgi-bin/setting
 ```
 EXAMPLE:{"section":"wifi","setting_list":[{"key": "clientid", "value": "ABC123", "line": "14"},{"key": "enable", "value": "false", "line": "15"},{"key": "mode", "value": "1", "line": "16"},{"key": "ap_ssid", "value": "HDZero", "line": "17"},{"key": "ap_passwd", "value": "divimath", "line": "18"},{"key": "sta_ssid", "value": "SSID", "line": "19"},{"key": "sta_passwd", "value": "abc123", "line": "20"},{"key": "dhcp", "value": "true", "line": "21"},{"key": "ip_addr", "value": "192.168.1.122", "line": "22"},{"key": "netmask", "value": "255.255.255.0", "line": "23"},{"key": "gateway", "value": "192.168.1.1", "line": "24"},{"key": "dns", "value": "192.168.1.1", "line": "25"},{"key": "rf_channel", "value": "6", "line": "26"},{"key": "root_pw", "value": "divimath", "line": "27"},{"key": "ssh", "value": "true", "line": "28"}]}
 
 ### Post Methods
-Create new lines or a new section after the line or section provided in the URI, at the end of the section, or at the end of file if no line or section is provided in the URI. If lines or section exists an error will be returned. Lines that don't exits will be created in an existing section.
+Create new lines or a new section after the line or section provided in the URI, at the end of the section, or at the end of file if no line or section is provided in the URI. If lines or section exists an error will be returned. Lines that don't exits will be created in an existing section. Takes a JSON Section object with one or more Lines.
 
 ```
-/cgi-bin/settings?post=line[&line=month]
-/cgi-bin/settings?post=section[&section=clock]
+/cgi-bin/setting?post=line[&line=month]
+/cgi-bin/setting?post=section[&section=clock]
 ```
 
 ### Put Methods
 Replaces all lines in a section with the lines passed as content. Return an error if the section does not exist.
 
 ```
-/cgi-bin/settings?put=line
+/cgi-bin/setting?put=line
 ```
 
 ### Patch Methods
 Change one or more line values in a section. Throw error if line or section does not exist.
 
 ```
-/cgi-bin/settings?patch=line
+/cgi-bin/setting?patch=line
 ```
 
 ### Delete Methods
 Delete one or more lines in a section? Throws error if a line does not exist.
 
 ```
-/cgi-bin/settings?delete=line
+/cgi-bin/setting?delete=line
 ```
 
 ## File Api
