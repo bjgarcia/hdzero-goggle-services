@@ -20,7 +20,7 @@ Get a line from a section by name or all lines from a section by section name or
 ```
 
 ### Post Methods
-Create new lines or a new section after the line or section provided in the URI given. Or create new lines or a new section at the end of the section or the end of file if no line or section is provided in the URI. If lines or section exists an error will be returned. Lines that don't exits will be created in an existing section. Takes a JSON Section object with one or more Lines. Returns the inserted section.
+Create new lines or a new section after the line or section provided in the URI given. Or create new lines or a new section at the end of the section or the end of file if no line or section is provided in the URI. If lines or section exists an error will be returned. Lines that don't exits will be created in existing section or section and line will be created if both are new. Takes a JSON Section object with one or more Lines. Returns the inserted section.
 
 ```
 {"section":"birthday","setting_list":[{"key":"year","value":"2024","line":"00"}]}
