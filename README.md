@@ -20,15 +20,20 @@ Get a line from a section by name or all lines from a section by section name or
 ```
 
 ### Post Methods
-Create new lines or a new section after the line or section provided in the URI, at the end of the section, or at the end of file if no line or section is provided in the URI. If lines or section exists an error will be returned. Lines that don't exits will be created in an existing section. Takes a JSON Section object with one or more Lines. Returns the inserted section.
+Create new lines or a new section after the line or section provided in the URI given. Or create new lines or a new section at the end of the section or the end of file if no line or section is provided in the URI. If lines or section exists an error will be returned. Lines that don't exits will be created in an existing section. Takes a JSON Section object with one or more Lines. Returns the inserted section.
 
 ```
+{"section":"birthday","setting_list":[{"key":"year","value":"2024","line":"00"}]}
+/cgi-bin/setting?post=line
+{"section":"birthday","setting_list":[{"key":"year","value":"2024","line":"00"}]}
 /cgi-bin/setting?post=line[&line=month]
 /cgi-bin/setting?post=section
-/cgi-bin/setting?post=section&section=clock
 {"section":"birthday","setting":[{"key": "year", "value": "2024", "line": "57"},{"key": "month", "value": "04", "line": "58"},{"key": "day", "value": "24", "line": "59"}]}
+/cgi-bin/setting?post=section&section=clock
 
 ```
+
+
 
 ### Put Methods
 Replaces all lines in a section with the lines passed as content. Return an error if the section does not exist.
@@ -49,7 +54,13 @@ Delete one or more lines in a section? Throws error if a line does not exist. Re
 
 ```
 /cgi-bin/setting?delete=line
+{"section":"birthday","setting_list":[{"key":"year","value":"2024","line":"00"}]}
+/cgi-bin/settings?delete=section
+{"section":"birthday","setting_list":[]}
 ```
+
+
+
 
 ## File Api
 API should operate on the SD Card mount point only. Anything outside of that should be prevented. Prevent malicious code by scrubbing paths and limiting file names. Keep it simple.
