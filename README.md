@@ -2,7 +2,7 @@
 A Web UI and Web API that leverages SumolX's work on services for the HDZero goggles.  
 
 ## Services
-The BusyBox Web Server only supports Get and Post methods. Other methods, when needed are represented with the URI. Server errors return as primary in the reponse header. Post methods return API errors as misscellaneous in the header. Errors and messages are returned as plain text in the body post response. I will implement a login but security is going to be a issue becuase the web server currently does not support HTTPS. Any one with access to your net work could gain access to your goggle. Don't give anyone access to your network. 
+These Services allow applications to access and update the SD card and goggle settings. Goggle settings are changed in the file that is used to persist goggle settings. The changes will be loaded on reboot. The BusyBox Web Server only supports Get and Post methods. Other methods, when needed are represented with the URI. Server errors are returned as primary in the reponse header. Post methods return API errors as misscellaneous in the header. Errors and messages are returned as plain text in the body of post responses. I will implement a login but security is going to be a issue becuase the web server currently does not support HTTPS. Any one with access to your net work could gain access to your goggle settings. Don't give anyone access to your network. 
 
 ## Settings Api
 The first section of the settings file must not be changed. The goggle will reset the entire file if it is missing. Changes to the Settings file are loaded on the next goggle reboot.
