@@ -35,14 +35,14 @@ Create new lines or a new section after the line or section provided in the URI 
 ```
 ```
 /cgi-bin/setting?post=section
-{"section":"birthday","setting":[{"key": "year", "value": "2024", "line": "57"},{"key": "month", "value": "04", "line": "58"},{"key": "day", "value": "24", "line": "59"}]}
+{"section":"birthday","setting_list":[{"key":"year","value":"2024","line":"00"},{"key":"month","value":"04","line":"00"},{"key":"day","value":"24","line":"00"}]}
+{"section":"birthday","setting":[{"key":"year","value":"2024","line":"57"},{"key":"month","value":"04","line":"58"},{"key":"day","value":"24","line":"59"}]}
 ```
 ```
 /cgi-bin/setting?post=section&section=clock
-
+{"section":"birthday","setting_list":[{"key":"year","value":"2024","line":"00"},{"key":"month","value":"04","line":"00"},{"key":"day","value":"24","line":"00"}]}
+{"section":"birthday","setting":[{"key":"year","value":"2024","line":"47"},{"key":"month","value":"04","line":"48"},{"key":"day","value":"24","line":"49"}]}
 ```
-
-
 
 ### Put Methods
 Replaces all lines in a section with the lines passed as content. Return an error if the section does not exist.
