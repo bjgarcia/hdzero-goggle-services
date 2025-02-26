@@ -24,9 +24,9 @@ Create new lines or a new section after the line or section provided in the URI 
 
 
 ```
-{"section":"birthday","setting_list":[{"key":"year","value":"2024","line":"00"}]}
 /cgi-bin/setting?post=line
 {"section":"birthday","setting_list":[{"key":"year","value":"2024","line":"00"}]}
+{"section":"birthday","setting_list":[{"key":"year","value":"2024","line":"57"}]}
 ```
 ```
 /cgi-bin/setting?post=line[&line=month]
@@ -34,6 +34,7 @@ Create new lines or a new section after the line or section provided in the URI 
 ```
 /cgi-bin/setting?post=section
 {"section":"birthday","setting":[{"key": "year", "value": "2024", "line": "57"},{"key": "month", "value": "04", "line": "58"},{"key": "day", "value": "24", "line": "59"}]}
+```
 ```
 /cgi-bin/setting?post=section&section=clock
 ```
@@ -55,17 +56,17 @@ Change one or more line values in a section. Throw error if line or section does
 ```
 
 ### Delete Methods
-Delete one or more lines in a section or delete entire section? Throws error if a line or section does not exist. Returns the delected section.
+Delete one or more lines in a section or delete entire section? Throws error if a line or section does not exist. Returns the delected lines and section.
 
 ```
 /cgi-bin/setting?delete=line
 {"section":"birthday","setting_list":[{"key":"year","value":"2024","line":"00"}]}
+{"section":"birthday","setting_list":[ {"key": "year", "value": "2024", "line": "57"}, ] }
+```
+```
 /cgi-bin/settings?delete=section
 {"section":"birthday","setting_list":[]}
 ```
-
-
-
 
 ## File Api
 API should operate on the SD Card mount point only. Anything outside of that should be prevented. Prevent malicious code by scrubbing paths and limiting file names. Keep it simple.
