@@ -29,7 +29,9 @@ Create new lines or a new section after the line or section provided in the URI 
 {"section":"birthday","setting_list":[{"key":"year","value":"2024","line":"57"}]}
 ```
 ```
-/cgi-bin/setting?post=line[&line=month]
+/cgi-bin/setting?post=line&line=month
+{"section":"birthday","setting_list":[{"key":"day","value":"24","line":"00"}]}
+{"section":"birthday","setting_list":[{"key":"day","value":"24","line":"59"}]}
 ```
 ```
 /cgi-bin/setting?post=section
