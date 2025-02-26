@@ -25,15 +25,17 @@ Create new lines or a new section after the line or section provided in the URI 
 
 ```
 {"section":"birthday","setting_list":[{"key":"year","value":"2024","line":"00"}]}
-````
 /cgi-bin/setting?post=line
-````
 {"section":"birthday","setting_list":[{"key":"year","value":"2024","line":"00"}]}
 /cgi-bin/setting?post=line[&line=month]
 /cgi-bin/setting?post=section
 {"section":"birthday","setting":[{"key": "year", "value": "2024", "line": "57"},{"key": "month", "value": "04", "line": "58"},{"key": "day", "value": "24", "line": "59"}]}
 /cgi-bin/setting?post=section&section=clock
 ```
+
+````
+/cgi-bin/setting?post=section&section=clock
+````
 
 ### Put Methods
 Replaces all lines in a section with the lines passed as content. Return an error if the section does not exist.
