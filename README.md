@@ -45,10 +45,12 @@ Create new lines or a new section after the line or section provided in the URI 
 ```
 
 ### Put Methods
-Replaces all lines in a section with the lines passed as content. Return an error if the section does not exist.
+Replaces all lines in a section with one or more lines passed as content. Return an error if the section does not exist.
 
 ```
 /cgi-bin/setting?put=line
+{"section":"birthday","setting_list":[{"key":"Year","value":"2025","line":"00"},{"key":"Month","value":"06","line":"00"}]}
+{"section":"birthday","setting_list":[{"key":"Year","value":"2025","line":"57"},{"key":"Month","value":"06","line":"58"}]}
 ```
 
 ### Patch Methods
