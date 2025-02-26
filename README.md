@@ -85,7 +85,10 @@ API operates on the SD Card mount point only. Anything outside of that is preven
 List will accepts simple globs and a single period extension. Example filter="filename*.jpg", filter = "*.jpg", or filter="filename.*" will work.  
 
 ```
+/cgi-bin/file
+{"info_list":[ {"name":"FSCK","date":"2025-02-26","time":"18:16:06.618056704","offset":"-0500","size":"4096","permissions":"drwxr-xr-x"},{"name":"isp0_0_0_0_ctx_saved.bin","date":"2025-02-26","time":"18:14:53.551053720","offset":"-0500","size":"40472","permissions":"-rw-r--r--"},{"name":"movies","date":"2025-02-23","time":"13:28:37.747766228","offset":"-0500","size":"4096","permissions":"drwxr-xr-x"}]}
 /cgi-bin/file?list=path[&filter=jpg]
+
 /cgi-bin/file?download=path
 /cgi-bin/file?stat=path
 ```
