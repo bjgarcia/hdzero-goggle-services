@@ -60,6 +60,8 @@ Change one or more line values in a section. Throw error if line or section does
 /cgi-bin/setting?patch=line
 {"section":"birthday","setting_list":[{"key":"Year","value":"1954","line":"00"},{"key":"Month","value":"02","line":"00"},{"key":"Day","value":"02","line":"00"}]}
 {"section":"birthday","setting_list":[{"key":"Year","value":"1954","line":"57"},{"key":"Month","value":"02","line":"58"}]}
+Status: 400 Bad Request
+Error: line does not exist.
 ```
 
 ### Delete Methods
