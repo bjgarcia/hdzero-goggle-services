@@ -8,7 +8,7 @@ The BusyBox Web Server only supports Get and Post methods. Other methods, when n
 The first section of the settings file must not be changed. The goggle will reset the entire file if it is missing. Changes to the Settings file are loaded on the next goggle reboot.
 
 ### Get Methods
-Get a line from a section by name or all lines from a section by section name or get all sections.
+Get a line or line from a section by name, or get all sections.
 
 ```
 /cgi-bin/setting?section=birthday&line=year
