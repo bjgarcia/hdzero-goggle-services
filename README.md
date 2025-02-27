@@ -79,7 +79,7 @@ Delete one or more lines in a section or delete entire section? Throws error if 
 ```
 
 ## File Api
-API operates on the SD Card mount point only. Anything outside of that is prevented. The API prevent malicious code by scrubbing paths and limiting file names. Keep it simple.
+API operates on the SD Card mount point only. Anything outside of that is prevented. The API prevents malicious code by scrubbing paths and limiting file names. The connection is not secure. Give anyone access to your network.
 
 ### Get Methods
 List will accepts simple globs and a single period extension. Example filter="filename*.jpg", filter = "*.jpg", or filter="filename.*" will work. The stat method will accept a path outside of sd card.  
@@ -100,7 +100,7 @@ cgi-bin/file?list=/movies&filter=*.jpg
 ```
 ```
 /cgi-bin/file?download/mnt/extsd/movies/hdz_006.mp4
-Opens the download file dialog.
+Opens the download file dialog to download the file. Size is limited.
 ```
 
 ### Post Methods
