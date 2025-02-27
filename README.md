@@ -82,19 +82,25 @@ Delete one or more lines in a section or delete entire section? Throws error if 
 API operates on the SD Card mount point only. Anything outside of that is prevented. The API prevent malicious code by scrubbing paths and limiting file names. Keep it simple.
 
 ### Get Methods
-List will accepts simple globs and a single period extension. Example filter="filename*.jpg", filter = "*.jpg", or filter="filename.*" will work.  
+List will accepts simple globs and a single period extension. Example filter="filename*.jpg", filter = "*.jpg", or filter="filename.*" will work. The stat method will accept a path outside of sd card.  
 
 ```
 /cgi-bin/file
+/cgi-bin/file?list=
 {"info_list":[ {"name":"FSCK","date":"2025-02-26","time":"18:16:06.618056704","offset":"-0500","size":"4096","permissions":"drwxr-xr-x"},{"name":"isp0_0_0_0_ctx_saved.bin","date":"2025-02-26","time":"18:14:53.551053720","offset":"-0500","size":"40472","permissions":"-rw-r--r--"},{"name":"movies","date":"2025-02-23","time":"13:28:37.747766228","offset":"-0500","size":"4096","permissions":"drwxr-xr-x"}]}
-/cgi-bin/file?list=path[&filter=jpg]
-
-/cgi-bin/file?download=path
-/cgi-bin/file?stat=path
+/cgi-bin/file?list=/movies/stars
+cgi-bin/file?list=/movies/stars&filter=*
+{"info_list":[ {"name":"save_this.jpg","date":"2025-02-13","time":"17:41:29.305099140","offset":"-0500","size":"11072","permissions":"-rw-r--r--"}]}
+cgi-bin/file?list=/movies&filter=*.jpg
+{"info_list":[ {"name":"/mnt/extsd//movies/hdz_000.jpg","date":"2025-02-13","time":"12:27:03.301328631","offset":"-0500","size":"6976","permissions":"-rw-r--r--"},{"name":"/mnt/extsd//movies/hdz_001.jpg","date":"2025-02-13","time":"12:27:04.232328669","offset":"-0500","size":"6976","permissions":"-rw-r--r--"},{"name":"/mnt/extsd//movies/hdz_004.jpg","date":"2025-02-13","time":"12:27:10.074328908","offset":"-0500","size":"6976","permissions":"-rw-r--r--"},{"name":"/mnt/extsd//movies/hdz_006.jpg","date":"2025-02-13","time":"12:27:11.799328978","offset":"-0500","size":"6976","permissions":"-rw-r--r--"},{"name":"/mnt/extsd//movies/save_this.jpg","date":"2025-02-13","time":"12:27:09.060328867","offset":"-0500","size":"11072","permissions":"-rw-r--r--"}]}
 ```
-EXAMPLE:
-stat:{"path":"/mnt/extsd/movies","used":10987,"available":4096}
-list:{ "info_list":[  {"name":"/mnt/extsd/movies/hdz_000.jpg","date":"2024-12-27", "time": "09:07:28.927907079", "offset": "-0500", "size": "6976", "permissions": "-rw-r--r--"}, {"name":"/mnt/extsd/movies/hdz_001.jpg","date":"2024-12-27", "time": "09:07:29.010907083", "offset": "-0500", "size": "6976", "permissions": "-rw-r--r--"}, {"name":"/mnt/extsd/movies/hdz_002.jpg","date":"2024-12-27", "time": "09:07:29.443907100", "offset": "-0500", "size": "11072", "permissions": "-rw-r--r--"}, {"name":"/mnt/extsd/movies/hdz_004.jpg","date":"2024-12-27", "time": "09:07:29.535907104", "offset": "-0500", "size": "6976", "permissions": "-rw-r--r--"}, {"name":"/mnt/extsd/movies/hdz_006.jpg","date":"2024-12-27", "time": "09:07:29.705907111", "offset": "-0500", "size": "6976", "permissions": "-rw-r--r--"} ] }
+```
+/cgi-bin/file?stat=/tmp
+{"path":"/dev/root","used":"53078148","available":"856419708"}
+```
+```
+/cgi-bin/file?download=path
+```
 
 ### Post Methods
 Upload a new file. MultiPart/Form file limited to just under 25mg (24400 x 1024).
