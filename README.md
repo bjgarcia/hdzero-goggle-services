@@ -99,7 +99,8 @@ cgi-bin/file?list=/movies&filter=*.jpg
 {"path":"/dev/root","used":"53078148","available":"856419708"}
 ```
 ```
-/cgi-bin/file?download=path
+/cgi-bin/file?download/mnt/extsd/movies/hdz_006.mp4
+Opens the download file dialog.
 ```
 
 ### Post Methods
