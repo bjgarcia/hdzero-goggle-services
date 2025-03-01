@@ -82,7 +82,7 @@ Delete one or more lines in a section or delete entire section? Throws error if 
 API operates on the SD Card mount point only. Anything outside of that is prevented. The API prevents malicious code by scrubbing paths and limiting file names. The connection is not secure. Give anyone access to your network.
 
 ### Get Methods
-List will accepts simple globs and a single period extension. Example filter="filename*.jpg", filter = "*.jpg", or filter="filename.*" will work. The stat method will accept a path outside of sd card.  
+List will accepts simple globs and a single period extension. Example filter="filename*.jpg", filter = "*.jpg", or filter="filename.*" will work. The stat method will accept a path outside of sd card. The upload/download file size is limited to just under 25mg (24400 x 1024). 
 
 ```
 /cgi-bin/file
@@ -104,7 +104,7 @@ Opens the download file dialog to download the file. Size is limited.
 ```
 
 ### Post Methods
-Upload a new file. MultiPart/Form file limited to just under 25mg (24400 x 1024).
+Upload expects a file in the multipart-form format. The files are parsed and saved by a c++ executable that I have written.
 
 ```
 /cgi-bin/file?post=upload
