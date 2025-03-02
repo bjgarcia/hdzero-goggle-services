@@ -104,7 +104,7 @@ Opens the download file dialog to download the file. Size is limited.
 ```
 
 ### Post Methods
-Upload expects a file in the multipart-form format. The files are parsed and saved by a c++ executable that I have written.
+Upload expects a file in the multipart-form format. The files are parsed and saved by a c++ executable. File name must include the entire path from /. However paths outside of /mnt/extsd are invalid.
 
 ```
 /cgi-bin/file?post=upload
