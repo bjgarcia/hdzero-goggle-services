@@ -79,10 +79,10 @@ Delete one or more lines in a section or delete entire section? Throws error if 
 ```
 
 ## File Api
-API operates on the SD Card mount point only. Anything outside of that is prevented. The API prevents malicious code by scrubbing paths and limiting file names. The connection is not secure. Give anyone access to your network.
+API operates on the SD Card mount point only. It discourages malicious code by scrubbing paths and limiting file names. The connection is not secure. Don't give anyone access to your network. Uploads and downloads are limited to 25 MG.
 
 ### Get Methods
-List will accepts simple globs and a single period extension. Example filter="filename*.jpg", filter = "*.jpg", or filter="filename.*" will work. The stat method will accept a path outside of sd card. The upload/download file size is limited to just under 25mg (24400 x 1024). 
+List will accepts simple globs and a single period extension. Example filter="filename*.jpg", filter = "*.jpg", or filter="filename.*" will work. The stat method will accept a path outside of sd card.
 
 ```
 /cgi-bin/file
@@ -104,14 +104,14 @@ Opens the download file dialog to download the file. Size is limited.
 ```
 
 ### Post Methods
-Upload expects a file in the multipart-form format. The files are parsed and saved by a c++ executable. File name must include the entire path from /. However paths outside of /mnt/extsd are invalid.
+Upload expects one or more files submitted in the multipart-form format. The files are parsed and saved by an added c++ executable for performance reasons.
 
 ```
 /cgi-bin/file?post=upload
 ```
 
 ### Put Methods
-Copy one or more files or convert a file to mp4. Takes an array of source and destination paths. Conversion uses ffmpeg with libx264 library built in. There is likley more work that could be done here. Resultng files are about 25% size of the orginal. Conversions overwrite and a .log file is created for each conversion with the output file name. Will add something that checks the log for completed conversion.
+Copy one or more files or convert a file to mp4. Takes an array of source and destination paths. Conversion uses ffmpeg with libx264 library built in. There is likley more work that could be done here. Resultng files are about 25% size of the orginal. Conversions overwrite and a .log file is created for each conversion with the output file name. Could add something that checks the log for completed conversion.
 
 ```
 /cgi-bin/file?put=file
