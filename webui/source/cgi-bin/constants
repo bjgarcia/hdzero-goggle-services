@@ -9,4 +9,4 @@ SDC_PATH="/mnt/extsd"
 APP_PATH="/mnt/app"
 MOVIE_PATH="${SDC_PATH}/movies"
 SETTING_PATH="${APP_PATH}/setting.ini"
-
+KB_LIMIT=25000000

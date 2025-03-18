@@ -167,7 +167,7 @@ on_line_post() {
             utils_content_json
 	    echo "${section%?}]}"
       else
-        utils_print_error "Status: 404 Not Found" "Error: Section does not exist."
+        utils_print_error "Status: 400 Not Found" "Error: Section does not exist."
       fi
    else  
       utils_print_error "Status: 404 Not Found" "Error: Settings file not found."
@@ -226,29 +226,34 @@ on_line_put() {
   if test -f ${SETTING_PATH}; then
      utils_post_data arr
      IFS="," read key value <<< $(sed 's/\["\(.*\)"\]\t"\(.*\)"/\1,\2/' <<< ${arr[0]})
-     section="{\"${value}\": ["
+     section="{\"section\":\"${value}\",\"setting_list\":["
      setting="${value}"
-     if [ -n "$setting" ]; then
-     get_section_all ars "$setting"
-     for (( i=1; i<${#ars[@]}; i++ )); do
-        IFS="=" read key value line <<< "${ars[i]}"
-     done
-     delete_line_all ${ars[@]}
      pos=$(sed -n "/\[$setting\]/{=;q;}" "$SETTING_PATH")
-     for (( i=1; i<${#arr[@]}; i+=3)); do
-       for (( j=0; j<3; j++)); do
-         IFS="," read key value <<< $(sed 's/^.*,"\(.*\)"\]\t"\(.*\)"$/\1,\2/' <<< ${arr[i+j]})
-	 case $(( $j % 3 )) in
-	    0) arr[0]=${value};;
-	    1) arr[1]=${value};;
-         esac
-       done
-       (( pos++ ))
-       section="${section} {\"key\": \"${arr[0]}\", \"value\": \"${arr[1]}\", \"line\": \"${pos}\"},"
-       sed -i "${pos}i ${arr[0]}=${arr[1]}" "$SETTING_PATH"
-     done
-     utils_content_json
-     echo "${section%?}]}"
+     if [ -n "${key}" ] && [ "${pos}" -gt 0 ]; then
+        get_section_all ars "$setting"
+        delete_line_all ${ars[@]}
+        lln=$(wc -l < $SETTING_PATH)
+        for (( i=1; i<${#arr[@]}; i+=3)); do
+          for (( j=0; j<3; j++)); do
+            IFS="," read key value <<< $(sed 's/^.*,"\(.*\)"\]\t"\(.*\)"$/\1,\2/' <<< ${arr[i+j]})
+	    case $(( $j % 3 )) in
+	       0) arr[0]=${value};;
+	       1) arr[1]=${value};;
+            esac
+          done
+          (( pos++ ))
+          if [ "$pos" -lt "$lln" ]; then
+            sed -i "${pos}i ${arr[0]}=${arr[1]}" "$SETTING_PATH"
+            section="${section}{\"key\":\"${arr[0]}\",\"value\":\"${arr[1]}\",\"line\":\"${pos}\"},"
+	  else
+            (( lln++ ))
+	    pos=${lln}
+            echo "${arr[0]}=${arr[1]}" >> "$SETTING_PATH"
+            section="${section}{\"key\":\"${arr[0]}\",\"value\":\"${arr[1]}\",\"line\":\"${pos}\"},"
+	  fi
+        done
+        utils_content_json
+        echo "${section%?}]}"
      else
         utils_print_error "Status: 400 Bad Request" "Error: Section does not exist."
      fi
@@ -263,7 +268,7 @@ on_line_patch() {
   if test -f ${SETTING_PATH}; then
      utils_post_data arr
      IFS="," read key value <<< $(sed 's/\["\(.*\)"\]\t"\(.*\)"/\1,\2/' <<< ${arr[0]})
-     section="{\"${value}\": ["
+     section="{\"section\":\"${value}\",\"setting_list\":["
      setting="${value}"
      for (( i=1; i<${#arr[@]}; i+=3)); do
        for (( j=0; j<3; j++)); do
@@ -277,9 +282,9 @@ on_line_patch() {
        IFS="=" read key value line <<< "$line"
        if [ -n "${key}" ] && [ -n "${value}" ]; then
           sed -i "${line} s/.*/${ars[0]}=${ars[1]}/" "$SETTING_PATH"
-	  section="${section} {\"key\": \"${ars[0]}\", \"value\": \"${ars[1]}\", \"line\": \"${line}\"},"
+	  section="${section}{\"key\":\"${ars[0]}\",\"value\":\"${ars[1]}\",\"line\":\"${line}\"},"
        else
-          utils_print_error "Status: 500" "Resource was not found."
+          utils_print_error "Status: 400 Bad Request" "Error: line does not exist."
        fi
      done
      utils_content_json
@@ -311,7 +316,7 @@ on_line_delete() {
 	  sed -i "${pos}d" "${SETTING_PATH}" 
 	  section="${section}{\"key\":\"${key}\",\"value\":\"${value}\",\"line\":\"${pos}\"},"
        else
-          utils_print_error "Status: 404 Not Found" "Error: Line was not found."
+          utils_print_error "Status: 400 Bad Request" "Error: line does not exist."
        fi
      done
      utils_content_json
