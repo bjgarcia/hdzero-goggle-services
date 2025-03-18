@@ -104,7 +104,7 @@ Opens the download file dialog to download the file. Size is limited.
 ```
 
 ### Post Methods
-Upload expects one or more files submitted in the multipart-form format. The files are parsed and saved by an added c++ executable for performance reasons.
+Upload expects one or more files submitted in the multipart-form format. Uploads overwrite existing files. The files are parsed and saved by an added c++ executable for performance reasons.
 
 ```
 /cgi-bin/file?post=upload
@@ -116,6 +116,7 @@ Copy one or more files or convert a file to mp4. Takes an array of source and de
 ```
 /cgi-bin/file?put=file
 /cgi-bin/file?put=mp4
+
 ```
 {"fr_to_list":[{"from_path":"/mnt/extsd/movies/save_this.jpg","to_path":"/mnt/extsd/movies/stars/save_this.jpg"},{"from_path":"/mnt/extsd/movies/stars/save_this.ts","to_path":"/mnt/extsd/movies/save_this.ts"}]}
 
