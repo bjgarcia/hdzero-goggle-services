@@ -5,3 +5,6 @@
 /.vs
 out/build/
 toolchain/
+..gitignore.un~
+.gitignore~
+build/
