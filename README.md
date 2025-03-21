@@ -103,20 +103,13 @@ cgi-bin/file?list=/movies&filter=*.jpg
 Opens the download file dialog to download the file. Size is limited to 25 MG.
 ```
 
-### Post Methods
-Upload expects one or more files submitted in the multipart-form format. Uploads overwrite existing files. The files are parsed and saved by an added c++ executable for performance reasons.
-
-```
-/cgi-bin/file?post=upload
-```
-
 ### Put Methods
-Copy one or more files or convert a file to mp4. Takes an array of source and destination paths. Conversion uses ffmpeg with libx264 library built in. There is likley more work that could be done here. Resultng files are about 25% size of the orginal. Conversions overwrite and a .log file is created for each conversion with the output file name. Could add something that checks the log for completed conversion.
+Upload one or more files. Copy one or more files or convert a file to mp4. Takes an array of source and destination paths. Conversion uses ffmpeg with libx264 library built in. There is likley more work that could be done here. Resultng MP4 files are about 25% size of the orginal. Conversions overwrite and a .log file is created for each conversion with the output file name. Could add something that checks the log for completed conversion.
 
 ```
 /cgi-bin/file?put=file
 /cgi-bin/file?put=mp4
-
+/cgi-bin/file?post=upload
 ```
 {"fr_to_list":[{"from_path":"/mnt/extsd/movies/save_this.jpg","to_path":"/mnt/extsd/movies/stars/save_this.jpg"},{"from_path":"/mnt/extsd/movies/stars/save_this.ts","to_path":"/mnt/extsd/movies/save_this.ts"}]}
 
