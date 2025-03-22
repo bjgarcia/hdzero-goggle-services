@@ -104,7 +104,7 @@ Opens the download file dialog to download the file. Size is limited to 25 MG.
 ```
 
 ### Put Methods
-Upload one or more files. Copy one or more files or convert a file to mp4. Takes an array of source and destination paths. Conversion uses ffmpeg with libx264 library built in. Resultng MP4 files are about 25% size of the orginal. Conversions overwrite and a .log file is created for each conversion with the output file name. Could add something that checks the log for completed conversion.
+Upload one or more files. Copy one or more files or convert a file to mp4. Takes an array of source and destination paths. Conversion uses ffmpeg with libx264 library built in. The license will required user to build ffmpeg. Resultng MP4 files are about 25% size of the orginal. Conversions overwrite and a .con text file is created for each conversion with the output file name. Could add something that checks the .con for the completed conversion.
 
 ```
 /cgi-bin/file?put=file
