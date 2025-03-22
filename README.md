@@ -1,4 +1,4 @@
-fore# HDZGOGGLE Web UI and API
+HDZGOGGLE Web UI and API
 A Web UI and Web API that leverages SumolX's work on services for the HDZero goggles.  
 
 ## Services
