@@ -78,7 +78,7 @@ Delete one or more lines in a section or delete entire section? Throws error if 
 ```
 
 ## File Api
-API operates on the SD Card mount point only. It discourages malicious code by scrubbing paths and limiting file names. The connection is not secure. Don't give anyone access to your network. Uploads and downloads are limited to 25 MG.
+There is likley more work that could be done on the File API. The API operates on the SD Card mount point only and accepts an absolute path or path relative to the mount point. Don't give anyone access to your network. The connection is not secure. It discourages malicious code by scrubbing paths and limiting file names. Uploads and downloads are limited to 25 MG. Paths can be either absolute  /mnt/extsd/mov
 
 ### Get Methods
 List will accepts simple globs and a single period extension. Example filter="filename*.jpg", filter = "*.jpg", or filter="filename.*" will work. The stat method will accept a path outside of sd card.
@@ -104,14 +104,19 @@ Opens the download file dialog to download the file. Size is limited to 25 MG.
 ```
 
 ### Put Methods
-Upload one or more files. Copy one or more files or convert a file to mp4. Takes an array of source and destination paths. Conversion uses ffmpeg with libx264 library built in. There is likley more work that could be done here. Resultng MP4 files are about 25% size of the orginal. Conversions overwrite and a .log file is created for each conversion with the output file name. Could add something that checks the log for completed conversion.
+Upload one or more files. Copy one or more files or convert a file to mp4. Takes an array of source and destination paths. Conversion uses ffmpeg with libx264 library built in. Resultng MP4 files are about 25% size of the orginal. Conversions overwrite and a .log file is created for each conversion with the output file name. Could add something that checks the log for completed conversion.
 
 ```
 /cgi-bin/file?put=file
+{"fr_to_list":[{"from_path":"/movies/save_this.ts","to_path":"movies/stars/bars.ts"},{"from_path":"/movies/hdz_0006na.mp4","to_path":"movies/stars/hdz_0006na.mp4"}]}
+copied from /mnt/extsd/movies/save_this.ts to /mnt/extsd/movies/stars/bars.ts.
+copied from /mnt/extsd/movies/hdz_0006na.mp4 to /mnt/extsd/movies/stars/hdz_0006na.mp4.
+
 /cgi-bin/file?put=mp4
 /cgi-bin/file?post=upload
 ```
 {"fr_to_list":[{"from_path":"/mnt/extsd/movies/save_this.jpg","to_path":"/mnt/extsd/movies/stars/save_this.jpg"},{"from_path":"/mnt/extsd/movies/stars/save_this.ts","to_path":"/mnt/extsd/movies/save_this.ts"}]}
+
 
 ### Patch Methods
 Move or rename one or more files. Takes an array of source and destination paths. 
