@@ -104,7 +104,7 @@ Opens the download file dialog to download the file. Size is limited to 25 MG.
 ```
 
 ### Put Methods
-Upload one or more files. Copy one or more files or convert a file to mp4. Takes an array of source and destination paths. Conversion uses ffmpeg with libx264 library built in. The license will required user to build ffmpeg. Resultng MP4 files are about 25% size of the orginal. Conversions overwrite and a .con text file is created for each conversion with the output file name. Could add something that checks the .con for the completed conversion.
+Upload one or more files. Copy one or more files or convert a file to mp4. Takes an array of source and destination paths. Conversion uses ffmpeg with libx264 library built in. The license will required user to build ffmpeg. Resultng MP4 files are about 25% size of the orginal and took about 4 minutes per file on my desktop. Conversions overwrite and a .con text file is created for each conversion with the output file name. Could add something that checks the .con or header for the completed conversion.
 
 ```
 /cgi-bin/file?put=file
@@ -113,7 +113,9 @@ copied from /mnt/extsd/movies/save_this.ts to /mnt/extsd/movies/stars/bars.ts.
 copied from /mnt/extsd/movies/hdz_0006na.mp4 to /mnt/extsd/movies/stars/hdz_0006na.mp4.
 
 /cgi-bin/file?put=mp4
-
+{"fr_to_list":[{"from_path":"/movies/hdz_001.ts","to_path":"movies/stars/hdz_001.mp4"},{"from_path":"/movies/hdz_004.ts","to_path":"movies/stars/hdz_004.mp4"}]}
+Conversion completed from /mnt/extsd/movies/hdz_001.ts to /mnt/extsd/movies/stars/hdz_001.mp4.
+Conversion completed from /mnt/extsd/movies/hdz_004.ts to /mnt/extsd/movies/stars/hdz_004.mp4.
 
 /cgi-bin/file?post=upload
 ```
