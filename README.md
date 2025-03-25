@@ -1,4 +1,4 @@
-# HDZGOGGLE Web UI and API
+HDZGOGGLE Web UI and API
 A Web UI and Web API that leverages SumolX's work on services for the HDZero goggles.  
 
 ## Services
@@ -20,8 +20,7 @@ Get a line or lines from a section by name, or get all sections.
 ```
 
 ### Post Methods
-Create new lines or a new section after the line or section provided in the URI given. Or create new lines or a new section at the end of the section or the end of file if no line or section is provided in the URI. If lines or section exists an error will be returned. Lines that don't exits will be created in existing section or section and line will be created if both are new. Takes a JSON Section object with one or more Lines. Returns the inserted section.
-
+Create new lines or a new section after the line or section provided in the URI given. Or create new lines or a new section at the end of the section or the end of file if no line or section is provided in the URI. If lines or section exists a error will be returned. Lines that don't exits will be created in existing section or section and line will be created if both are new. Takes a JSON Section object with one or more Lines. Returns the inserted section.
 
 ```
 /cgi-bin/setting?post=line
@@ -29,7 +28,7 @@ Create new lines or a new section after the line or section provided in the URI 
 {"section":"birthday","setting_list":[{"key":"year","value":"2024","line":"57"}]}
 ```
 ```
-/cgi-bin/setting?post=line&line=month
+/cgi-bin/setting?post=line&after=month
 {"section":"birthday","setting_list":[{"key":"day","value":"24","line":"00"}]}
 {"section":"birthday","setting_list":[{"key":"day","value":"24","line":"59"}]}
 ```
@@ -39,7 +38,7 @@ Create new lines or a new section after the line or section provided in the URI 
 {"section":"birthday","setting":[{"key":"year","value":"2024","line":"57"},{"key":"month","value":"04","line":"58"},{"key":"day","value":"24","line":"59"}]}
 ```
 ```
-/cgi-bin/setting?post=section&section=clock
+/cgi-bin/setting?post=section&before=clock
 {"section":"birthday","setting_list":[{"key":"year","value":"2024","line":"00"},{"key":"month","value":"04","line":"00"},{"key":"day","value":"24","line":"00"}]}
 {"section":"birthday","setting":[{"key":"year","value":"2024","line":"47"},{"key":"month","value":"04","line":"48"},{"key":"day","value":"24","line":"49"}]}
 ```
@@ -79,46 +78,52 @@ Delete one or more lines in a section or delete entire section? Throws error if 
 ```
 
 ## File Api
-API operates on the SD Card mount point only. It discourages malicious code by scrubbing paths and limiting file names. The connection is not secure. Don't give anyone access to your network. Uploads and downloads are limited to 25 MG.
+There is likley more work that could be done on the File API. The API operates on the SD Card mount point only and accepts an absolute path or path relative to the mount point. Don't give anyone access to your network. The connection is not secure. It discourages malicious code by scrubbing paths and limiting file names. Uploads and downloads are limited to 25 MG. Paths can be either absolute  /mnt/extsd/mov
 
 ### Get Methods
 List will accepts simple globs and a single period extension. Example filter="filename*.jpg", filter = "*.jpg", or filter="filename.*" will work. The stat method will accept a path outside of sd card.
 
 ```
 /cgi-bin/file
-/cgi-bin/file?list=
-{"info_list":[ {"name":"FSCK","date":"2025-02-26","time":"18:16:06.618056704","offset":"-0500","size":"4096","permissions":"drwxr-xr-x"},{"name":"isp0_0_0_0_ctx_saved.bin","date":"2025-02-26","time":"18:14:53.551053720","offset":"-0500","size":"40472","permissions":"-rw-r--r--"},{"name":"movies","date":"2025-02-23","time":"13:28:37.747766228","offset":"-0500","size":"4096","permissions":"drwxr-xr-x"}]}
+{"info_list":[ {"name":"FSCK","date":"2025-02-26","time":"18:16:06.618056704","offset":"-0500","size":"4096","permissions":"drwxr-xr-x"},{"name":"HDZERO_GOGGLE-75-191-9.4.0.bin","date":"2025-03-18","time":"14:49:51.286455950","offset":"-0400","size":"7464962","permissions":"-rw-r--r--"},{"name":"isp0_0_0_0_ctx_saved.bin","date":"2025-02-26","time":"18:14:53.551053720","offset":"-0500","size":"40472","permissions":"-rw-r--r--"},{"name":"movies","date":"2025-02-23","time":"13:28:37.747766228","offset":"-0500","size":"4096","permissions":"drwxr-xr-x"}]}
+
 /cgi-bin/file?list=/movies/stars
-cgi-bin/file?list=/movies/stars&filter=*
-{"info_list":[ {"name":"save_this.jpg","date":"2025-02-13","time":"17:41:29.305099140","offset":"-0500","size":"11072","permissions":"-rw-r--r--"}]}
+{"info_list":[ {"name":"hdz_000.jpg","date":"2025-03-18","time":"14:49:50.291455909","offset":"-0400","size":"6978","permissions":"-rw-r--r--"}]}
+
 cgi-bin/file?list=/movies&filter=*.jpg
 {"info_list":[ {"name":"/mnt/extsd//movies/hdz_000.jpg","date":"2025-02-13","time":"12:27:03.301328631","offset":"-0500","size":"6976","permissions":"-rw-r--r--"},{"name":"/mnt/extsd//movies/hdz_001.jpg","date":"2025-02-13","time":"12:27:04.232328669","offset":"-0500","size":"6976","permissions":"-rw-r--r--"},{"name":"/mnt/extsd//movies/hdz_004.jpg","date":"2025-02-13","time":"12:27:10.074328908","offset":"-0500","size":"6976","permissions":"-rw-r--r--"},{"name":"/mnt/extsd//movies/hdz_006.jpg","date":"2025-02-13","time":"12:27:11.799328978","offset":"-0500","size":"6976","permissions":"-rw-r--r--"},{"name":"/mnt/extsd//movies/save_this.jpg","date":"2025-02-13","time":"12:27:09.060328867","offset":"-0500","size":"11072","permissions":"-rw-r--r--"}]}
+
 ```
 ```
 /cgi-bin/file?stat=/tmp
-{"path":"/dev/root","used":"53078148","available":"856419708"}
+{"path":"/dev/sda2","used":"80826360","available":"828671496"}
 ```
 ```
-/cgi-bin/file?download/mnt/extsd/movies/hdz_006.mp4
-Opens the download file dialog to download the file. Size is limited.
-```
-
-### Post Methods
-Upload expects one or more files submitted in the multipart-form format. Uploads overwrite existing files. The files are parsed and saved by an added c++ executable for performance reasons.
-
-```
-/cgi-bin/file?post=upload
+/cgi-bin/file?download=/movies/hdz_006.mp4
+Opens the download file dialog to download the file. Size is limited to 25 MG.
 ```
 
 ### Put Methods
-Copy one or more files or convert a file to mp4. Takes an array of source and destination paths. Conversion uses ffmpeg with libx264 library built in. There is likley more work that could be done here. Resultng files are about 25% size of the orginal. Conversions overwrite and a .log file is created for each conversion with the output file name. Could add something that checks the log for completed conversion.
+Upload one or more files. Copy one or more files or convert a file to mp4. Takes an array of source and destination paths. Conversion uses ffmpeg with libx264 library built in. The license will required user to build ffmpeg. Resultng MP4 files are about 25% size of the orginal and took about 4 minutes per file on my desktop. Conversions overwrite and a .con text file is created for each conversion with the output file name. Could add something that checks the .con or header for the completed conversion.
 
 ```
-/cgi-bin/file?put=file
+/cgi-bin/file?put=copy
+{"fr_to_list":[{"from_path":"/movies/save_this.ts","to_path":"movies/stars/bars.ts"},{"from_path":"/movies/hdz_0006na.mp4","to_path":"movies/stars/hdz_0006na.mp4"}]}
+copied from /mnt/extsd/movies/save_this.ts to /mnt/extsd/movies/stars/bars.ts.
+copied from /mnt/extsd/movies/hdz_0006na.mp4 to /mnt/extsd/movies/stars/hdz_0006na.mp4.
+
 /cgi-bin/file?put=mp4
+{"fr_to_list":[{"from_path":"/movies/hdz_001.ts","to_path":"movies/stars/hdz_001.mp4"},{"from_path":"/movies/hdz_004.ts","to_path":"movies/stars/hdz_004.mp4"}]}
+Conversion completed from /mnt/extsd/movies/hdz_001.ts to /mnt/extsd/movies/stars/hdz_001.mp4.
+Conversion completed from /mnt/extsd/movies/hdz_004.ts to /mnt/extsd/movies/stars/hdz_004.mp4.
 
+/cgi-bin/file?put=upload
+--00234c79-80ba-414a-92fe-68733bb023b1
+Content-Disposition: form-data; name="files"; filename="HDZERO_GOGGLE-75-191-9.4.0.bin"
+Content-Type: application/octet-stream ...
+Successfully uploaded --00234c79-80ba-414a-92fe-68733bb023b1
+ file: /mnt/extsd/HDZERO_GOGGLE-75-191-9.4.0.bin next: 255
 ```
-{"fr_to_list":[{"from_path":"/mnt/extsd/movies/save_this.jpg","to_path":"/mnt/extsd/movies/stars/save_this.jpg"},{"from_path":"/mnt/extsd/movies/stars/save_this.ts","to_path":"/mnt/extsd/movies/save_this.ts"}]}
 
 ### Patch Methods
 Move or rename one or more files. Takes an array of source and destination paths. 
