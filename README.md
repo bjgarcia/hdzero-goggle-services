@@ -107,7 +107,7 @@ Opens the download file dialog to download the file. Size is limited to 25 MG.
 Upload one or more files. Copy one or more files or convert a file to mp4. Takes an array of source and destination paths. Conversion uses ffmpeg with libx264 library built in. The license will required user to build ffmpeg. Resultng MP4 files are about 25% size of the orginal and took about 4 minutes per file on my desktop. Conversions overwrite and a .con text file is created for each conversion with the output file name. Could add something that checks the .con or header for the completed conversion.
 
 ```
-/cgi-bin/file?put=file
+/cgi-bin/file?put=copy
 {"fr_to_list":[{"from_path":"/movies/save_this.ts","to_path":"movies/stars/bars.ts"},{"from_path":"/movies/hdz_0006na.mp4","to_path":"movies/stars/hdz_0006na.mp4"}]}
 copied from /mnt/extsd/movies/save_this.ts to /mnt/extsd/movies/stars/bars.ts.
 copied from /mnt/extsd/movies/hdz_0006na.mp4 to /mnt/extsd/movies/stars/hdz_0006na.mp4.
@@ -117,10 +117,13 @@ copied from /mnt/extsd/movies/hdz_0006na.mp4 to /mnt/extsd/movies/stars/hdz_0006
 Conversion completed from /mnt/extsd/movies/hdz_001.ts to /mnt/extsd/movies/stars/hdz_001.mp4.
 Conversion completed from /mnt/extsd/movies/hdz_004.ts to /mnt/extsd/movies/stars/hdz_004.mp4.
 
-/cgi-bin/file?post=upload
+/cgi-bin/file?put=upload
+--00234c79-80ba-414a-92fe-68733bb023b1
+Content-Disposition: form-data; name="files"; filename="HDZERO_GOGGLE-75-191-9.4.0.bin"
+Content-Type: application/octet-stream ...
+Successfully uploaded --00234c79-80ba-414a-92fe-68733bb023b1
+ file: /mnt/extsd/HDZERO_GOGGLE-75-191-9.4.0.bin next: 255
 ```
-{"fr_to_list":[{"from_path":"/mnt/extsd/movies/save_this.jpg","to_path":"/mnt/extsd/movies/stars/save_this.jpg"},{"from_path":"/mnt/extsd/movies/stars/save_this.ts","to_path":"/mnt/extsd/movies/save_this.ts"}]}
-
 
 ### Patch Methods
 Move or rename one or more files. Takes an array of source and destination paths. 
