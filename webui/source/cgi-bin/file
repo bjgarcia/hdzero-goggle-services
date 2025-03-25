@@ -59,11 +59,10 @@ on_file_upload() {
    while IFS= read -r -u 3 line; 
    do
        # check for boundary
-       if [[ "$line" == "--$1"* ]] && [[ "$line" != *"$1--" ]]
+       if [[ "$line" == "--$1"* && "$line" != *"--$1--"* ]]
        then
           while IFS= read -r -u 3  header && [[ "$header" != $'\r' ]] && [[ "$header" != '\n'^ ]]
           do
-          echo "h: $header" >> debug
              if [[ "$header" == *"filename"* ]]; then
                 file=$(sed 's/.*filename="\([^"]*\)".*/\1/' <<< "$header")
 	        break; 
@@ -76,7 +75,7 @@ on_file_upload() {
 	     ./multip "--$1" "$2" "$path" "$pos"
 	     pos=$?
 	  fi
-	  echo "Successfully uploaded $line file: $path next: $pos"
+	  echo "Successfully uploaded file: $path next: $pos"
        fi
    done 3< "$2"
    rm -Rf "$2"
@@ -112,10 +111,12 @@ on_file_convert() {
 	    ;;
        esac
      done
-     t_file = $(basename "$t_path")
-     if [[ -f "$f_path" && "${t_file##*.}" == "ts" ]]; then
-	     ffmpeg -nostats -y -i "$f_path" -c:v libx264 -c:a aac "$t_path" &> "${t_file%.*}.log"  
-        echo "Started conversion from $f_path to $t_path."		
+     echo "f: $f_path t: $t_path" >> debug
+     f_file=$(basename "$f_path")
+     echo "f: $f_path t: $f_file e: ${f_file##*.}" >> debug
+     if [[ -f "$f_path" && "${f_file##*.}" == "ts" ]]; then
+	     ffmpeg -nostats -y -i "$f_path" -c:v libx264 -c:a aac "$t_path" &> "${t_path%.*}.con"  
+        echo "Conversion completed from $f_path to $t_path."		
      else
         echo "Error: file $f_path does not exist." 
      fi
@@ -252,10 +253,23 @@ else
       fi
       	 case ${key} in
          put)
-             if [ ${1#*=} == "file" ]; then
+             if [ ${1#*=} == "copy" ]; then
                 on_file_copy
-             elif [ ${key} == "mp4" ]; then
+             elif [ ${1#*=} == "mp4" ]; then
                 on_file_convert
+	     elif [[ "${1#*=}" == "upload" && "$CONTENT_TYPE" == *"multipart/form-data"* ]]; then
+               if [[ $CONTENT_LENGTH -lt $KB_LIMIT ]]; then
+                  boundary=$(sed 's/.*boundary=\"\(.*\)\"/\1/' <<< ${CONTENT_TYPE})
+                  path=$(mktemp -d)
+	       	  if cat <&0 > "$path/upload_file"; then
+                     on_file_upload "$boundary" "$path/upload_file"
+	          else
+                     rm -Rf "$path"
+                     utils_print_error "HTTP_500 Internal Server Error" "Upload failed."
+		  fi
+	       else
+                  utils_print_error "413 Content Too Large" "$CONTENT_LENGTH is more than $KB_LIMIT."
+	       fi
 	     else
 		utils_print_error "421 Misdirected Request" "Use only line, section or file."
              fi
