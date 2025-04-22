@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/ash
 
 # Includes
 . ./constants
@@ -7,354 +7,306 @@
 # common functions
 
 # Returns a line with line number of a named section
-get_section_line(){
-   local cnt=$(sed -n "/\[$1\]/{=;q;}" "$SETTING_PATH")
-   local rslt="="
-   while read ln; do
-   ((cnt++))
-   if [[ $ln == *"$2"* ]]; then
-     rslt=$ln
+get_section_line() {
+   local line=
+   local cnt=`expr $(sed -n "/\[$1\]/{=;q;}" "$SETTING_PATH")`
+   echo "$(sed -n "/\[$1\]/,/\[/p" "$SETTING_PATH" | grep -v "\[[A-Z]*[a-z]*\]")" | { 
+   while read line; do
+   #echo "rsl: $line cnt: $cnt 1: $1 2: $2 3: $3" >> debug
+   cnt=`expr $cnt + 1`
+   if [ -n "$2" ] && echo "$line" | grep -q "$2"; then
+     echo "$line=$cnt"
      break;
    fi
-   done < <(sed -n "/\[$1\]/,/\[/p" "$SETTING_PATH" | grep -v "\[[A-Z]*[a-z]*\]")
-   echo "$rslt=$cnt"
-}
-
-# Returns all lines of a section
-get_section_all(){
-   local -n arr_ref="$1"
-   local cnt=$(sed -n "/\[$2\]/{=;q;}" "$SETTING_PATH")
-   while read ln; do
-      ((cnt++))
-      arr_ref+=("$ln=$cnt")
-   done < <(sed -n "/\[$2\]/,/\[/p" "$SETTING_PATH" | grep -v "\[[A-Z]*[a-z]*\]")
-}
-
-# Delete all lines of a section
-delete_line_all(){
-   local pos=
-   for (( i=0; i<${#ars[@]}; i++ )); do
-      IFS="=" read ky vl ln <<< "${ars[i]}"
-      if [ ${i} -eq 0 ]; then
-         pos=$ln
-      fi	
    done
-   sed -i "${pos},${ln}d" "${SETTING_PATH}" 
+   }   
 }
 
-# Returns the last line number of a section
-get_section_last_line(){
+# Return last section line number or zero
+get_section_last_line() { 
+   local line=
    local cnt=$(sed -n "/\[$1\]/{=;q;}" "$SETTING_PATH")
+   if [ -z "$cnt" ]; then
+      cnt=0
+   fi
+   echo $(sed -n "/\[$1\]/,/\[/p" "$SETTING_PATH" | grep -v "\[[A-Z]*[a-z]*\]") | {
    while read line; do
-      ((cnt++))
-   done < <(sed -n "/\[$1\]/,/\[/p" "$SETTING_PATH" | grep -v "\[[A-Z]*[a-z]*\]")
+      if [ "$cnt" -gt 0 ]; then
+         cnt=`expr $cnt + 1`
+      fi
+   done
    echo "$cnt"
+   }
 }
 
 # Handlers
 
-# Send the entire settings file
+# get file
 on_settings() {
     utils_content_json
     #utils_is_action_authorized "${HTTP_COOKIE#token=}"
     if test -f ${SETTING_PATH}; then
-        count=0
-	arr=()
-        body="{\"sections\":[{\"section\":"
-        while read line; do
-          ((count++))
-          if [ ! -z "${line}" ]; then
-              IFS="=" read -ra arr <<< "$line"
-              if [ ! -z "{$arr[0]}" ] && [ ! -z "${arr[1]}" ]; then
-                # add settings
-		setting="${setting}{\"key\":\"${arr[0]}\", \"value\":\"${arr[1]}\", \"ln\": \"${count}\"},"
-              elif [ ! -z "${arr[0]}" ] && [ $count -gt 1 ]; then
-                # add sections
-                setting="${setting%?}"
-                body="${body}\"${section}\":[$setting],"
-                section=$(echo "${arr[0]}" | sed 's/[][]//g')
-                setting=
-              else
-	        # add first section
-                section=$(echo "${arr[0]}" | sed 's/[][]//g')
+       cnt=0
+       body="{\"sections\":[{\"section\":"
+       while read line; do
+	 cnt=`expr $cnt + 1`
+         if [ ! -z "${line}" ]; then
+	    IFS="="; set -- $line
+	    if [ ! -z "$1" ] && [ ! -z "$2" ]; then
+               # settings
+	       setting="${setting}{\"key\":\"${1}\", \"value\":\"${2}\", \"ln\": \"${cnt}\"},"
+            elif [ ! -z "$1" ] && [ $cnt -gt 1 ]; then
+               # sections
+               setting="${setting%?}"
+               body="${body}\"${section}\":[$setting],"
+               section=$(echo "$1" | sed 's/[][]//g')
+               setting=
+            else
+	        # first section
+                section=$(echo "$1" | sed 's/[][]//g')
                 body="${body}\"${section}\","
-              fi
+            fi
 	 fi
 	done < "$SETTING_PATH"
 	setting="${setting%?}"
 	echo "${body}\"${section}\":[$setting]}]}"
    else
-      utils_print_error "Status: 404" "Settings file not found."
+      utils_print_error "Status: 404 Not Found" "Error: file: \"$SETTING_PATH\" not found."
    fi
 }
 
-# Send a setting line
+# get line
 on_line_read() {
   utils_content_json
   #utils_is_action_authorized "${HTTP_COOKIE#token=}"
   if test -f ${SETTING_PATH}; then
+     section="$1" 
      line=$(get_section_line $1 $2)
-     IFS="=" read key value line <<< "$line"
-     if [ ! -z "${key}" ] && [ ! -z "${value}" ]; then
-        setting="{\"key\": \"${key}\", \"value\": \"${value}\", \"line\": \"${line}\"}"
+     IFS="="; set -- $line
+     if [ ! -z "$1" ] && [ ! -z "$2" ]; then
+        setting="{\"key\": \"${1}\", \"value\": \"${2}\", \"line\": \"${3}\"}"
      else
-        utils_print_error "Status: 500" "resource was not found."
+        utils_print_error "Status: 500" "section \"$1\", line: \"$2\" does not exist."
      fi
-     echo "{\"section\":\"${1}\",\"setting_list\":[$setting]}"
+     echo "{\"section\":\"${section}\",\"setting_list\":[$setting]}"
   else
-     utils_print_error "Status: 404" "Setting file not found."
+     utils_print_error "Status: 404 Not Found" "Error: file: \"$SETTING_PATH\" not found."
   fi
 }
 
-# Send a settings section
+# get section
 on_section_read() {
   utils_content_json
   #utils_is_action_authorized "${HTTP_COOKIE#token=}"
   if test -f ${SETTING_PATH}; then
-     get_section_all arr $1
-     for line in "${arr[@]}"; do
-        IFS="=" read key value line <<< "$line"
-        setting="${setting}{\"key\": \"${key}\", \"value\": \"${value}\", \"line\": \"${line}\"},"
-        done
-        setting="${setting%?}"
-        echo "{\"section\":\"${1}\",\"setting_list\":[$setting]}"
+     section="$1" 
+     cnt=$(sed -n "/\[$2\]/{=;q;}" "$SETTING_PATH")     
+     echo $(sed -n "/\[$1\]/,/\[/p" "$SETTING_PATH" | grep -v "\[[A-Z]*[a-z]*\]") | { 
+       while read line; do
+          cnt=`expr $cnt + 1`
+          IFS="="; set -- $line
+          setting="${setting}{\"key\": \"${1}\", \"value\": \"${2}\", \"line\": \"${cnt}\"},"
+       done 
+       setting="${setting%?}"
+       echo "{\"section\":\"${section}\",\"setting_list\":[$setting]}"
+     }
   else
-      utils_print_error "Status: 404" "Settings file not found."
+      utils_print_error "Status: 404 Not Found" "Error: file: \"$SETTING_PATH\" not found."
   fi
 }
 
-# insert a new line in a section after line number 
+# new line 
 on_line_post() {
-   #utils_is_action_authorized "${HTTP_COOKIE#token=}"
+   #utils_is_action_authorized "${HTTP_COOKIE:w#token=}"
    if test -f ${SETTING_PATH}; then
-      utils_post_data arr
-      IFS="," read key value <<< $(sed 's/\["\(.*\)"\]\t"\(.*\)"/\1,\2/' <<< ${arr[0]})
-      section="{\"section\":\"${value}\",\"setting_list\":["
-      setting="${value}"
-      pos=$(sed -n "/\[$setting\]/{=;q;}" "$SETTING_PATH")
-      if [ -n "$pos" ]; then
-         line=$(get_section_line "$setting" "$1")
-         IFS="=" read key value pos <<< "$line"
-         if [ -z "$pos" ]; then
-            pos=$(get_section_last_line "$setting")
+      setting="$1"
+      json_str=$(echo "$POST_DATA" | ./json.sh -l) # parse post  
+      IFS=","; set -- $(echo $json_str | head -1 | sed 's/\["\(.*\)"\]\t"\(.*\)"/\1,\2/') 
+      json_str="{\"section\":\"${2}\",\"setting_list\":["
+      pos=$(sed -n "/\[$2\]/{=;q;}" "$SETTING_PATH")
+      section=$2
+      if [ -n "$pos" ]; then # section exists 
+         line=$(get_section_line "$section" "$setting")
+         IFS="="; set -- $line
+         if [ -z "$3" ]; then # after last line 
+            pos=$(get_section_last_line "$section")
          fi
-	 for (( i=1; i<${#arr[@]}; i+=3)); do
-	   for (( j=0; j<3; j++)); do
-	      IFS="," read key value <<< $(sed 's/^.*,"\(.*\)"\]\t"\(.*\)"$/\1,\2/' <<< ${arr[i+j]})
-	      case $(( $j % 3 )) in
-	         0) ars[0]=${value};;
-	         1) ars[1]=${value};;
-              esac
-            done
-	    # does line already exist if it does then skip and error. if not then insert at next pos
-            line=$(get_section_line "$setting" "${ars[0]}")
-            IFS="=" read key value xpos <<< "$line"
-            if [ -z "${key}" ]; then
-               lln=$(wc -l < $SETTING_PATH)
-               if [ "$pos" -lt "$lln" ]; then
-		  (( pos++ ))
-		  section="${section}{\"key\":\"${ars[0]}\",\"value\":\"${ars[1]}\",\"line\":\"${pos}\"},"
-		  sed -i "${pos}i ${ars[0]}=${ars[1]}" "$SETTING_PATH"
-	       else
-		  (( pos++ ))
-		  section="${section}{\"key\":\"${ars[0]}\",\"value\":\"${ars[1]}\",\"line\":\"${pos}\"},"
-                  echo  "${ars[0]}=${ars[1]}" >> "$SETTING_PATH"
-	       fi
-            else
-               utils_print_error "Status: 400 Bad Request" "Error: Line already exists."
-	    fi
-            done
-            utils_content_json
-	    echo "${section%?}]}"
+	 cnt=0
+         echo $(echo "$POST_DATA" | ./json.sh -l | awk 'NR>1') | { while read setting; do 
+            line=$(echo $setting | sed 's/^.*,"\([a-zA-Z]*\)"\]\t"\([a-zA-Z0-9]*\)"$/\1,\2/') 
+            OIFS=$IFS;IFS=","; set -- $line
+            case "$1" in 
+               key) key=$2 ;;
+             value) value=$2;;
+            esac
+            IFS=$OIFS
+            cnt=`expr $cnt + 1`
+            res=`expr $cnt % 3`
+            if [ $res -eq 0 ]; then
+              line=$(get_section_line "$section" "$key")
+              if [ -z "$line" ]; then
+                res=$(wc -l < "$SETTING_PATH")
+                OIFS=$IFS;IFS=","; set -- $line
+                if [ "$pos" -lt "$res" ]; then
+                   pos=`expr $pos + 1`
+                   json_str="${json_str}{\"key\":\"${key}\",\"value\":\"${value}\",\"line\":\"${pos}\"},"
+		   sed -i "${pos}i ${key}=${value}" "$SETTING_PATH"
+	        else
+                  pos=`expr $pos + 1`
+		  json_str="${json_str}{\"key\":\"${key}\",\"value\":\"${value}\",\"line\":\"${pos}\"},"
+                  echo  "${key}=${value}" >> "$SETTING_PATH"
+	        fi
+                IFS=$OIFS
+              else
+                 utils_print_error "Status: 400 Bad Request" "Error: Line: \"$line\" already exists." 
+              fi 
+           fi
+	 done
+         utils_content_json
+         echo "${json_str%,}]"
+         }
       else
-        utils_print_error "Status: 400 Not Found" "Error: Section does not exist."
+        utils_print_error "Status: 400 Bad Request" "Error: Section: \"$section\" does not exist."
       fi
    else  
-      utils_print_error "Status: 404 Not Found" "Error: Settings file not found."
+      utils_print_error "Status: 404 Not Found" "Error: file: \"$SETTING_PATH\" not found."
    fi
 }
 
-# insert a new section after a section
+# new section
 on_section_post() {
    #utils_is_action_authorized "${HTTP_COOKIE#token=}"
    if test -f ${SETTING_PATH}; then
-      utils_post_data arr
-      IFS="," read key value <<< $(sed 's/\["\(.*\)"\]\t"\(.*\)"/\1,\2/' <<< ${arr[0]})
-      section="{\"section\":\"${value}\",\"setting\":["
-      setting="${value}"
-      pos=$(sed -n "/\[$setting\]/{=;q;}" "$SETTING_PATH")
-      if [ -z "$pos" ]; then
-         pos=$(get_section_last_line "$1")
-         lln=$(wc -l < $SETTING_PATH)
-         if [ "$pos" -lt "$lln" ]; then
-            (( pos++ ))
+      section="$1"
+      json_str=$(echo "$POST_DATA" | ./json.sh -l) # parse post  
+      IFS=","; set -- $(echo $json_str | head -1 | sed 's/\["\(.*\)"\]\t"\(.*\)"/\1,\2/') 
+      json_str="{\"section\":\"${2}\",\"setting_list\":["
+      pos=$(sed -n "/\[$2\]/{=;q;}" "$SETTING_PATH")
+      setting="$2"
+      if [ -z "$pos" ]; then # not exists 
+         pos=$(get_section_last_line "$section")
+         lln=$(wc -l < "$SETTING_PATH")
+         if [ "$pos" -lt "$lln" ] && [ "$pos" -ne 0 ]; then
+            pos=`expr $pos + 1`
             sed -i "${pos}i \[${setting}\]" "$SETTING_PATH"
 	 else
-            (( lln++ ))
-	    pos=${lln}
+            pos=`expr $lln + 1`
 	    echo "[${setting}]" >> "$SETTING_PATH"
 	 fi
-	 for (( i=1; i<${#arr[@]}; i+=3)); do
-	    (( pos++ ))
-	    for (( j=0; j<3; j++)); do
-	       IFS="," read key value <<< $(sed 's/^.*,"\(.*\)"\]\t"\(.*\)"$/\1,\2/' <<< ${arr[i+j]})
-	       case $(( $j % 3 )) in
-	          0) ars[0]=${value};;
-	          1) ars[1]=${value};;
-               esac
-            done
-	    section="${section}{\"key\":\"${ars[0]}\",\"value\":\"${ars[1]}\",\"line\":\"${pos}\"},"
-            if [ -z "$pos" ] || [ "$pos" -ge "$lln" ]; then
-               echo  "${ars[0]}=${ars[1]}" >> "$SETTING_PATH"
-            else
-               sed -i "${pos}i ${ars[0]}=${ars[1]}" "$SETTING_PATH"
-            fi
-         done
          utils_content_json
-	 echo "${section%?}]}"
+         echo "${json_str%,}]"
       else
-         utils_print_error "Status: 400 Bad Request" "Error: Section already exists."
+         utils_print_error "Status: 400 Bad Request" "Error: Section: \"$setting\" already exists."
       fi
    else  
-      utils_print_error "Status: 404 Not Found" "Error: Settings file not found."
+      utils_print_error "Status: 404 Not Found" "Error: file: \"$SETTING_PATH\" not found."
    fi
 }
 
-# Replace a line with a new line 
+# Replace line 
 on_line_put() {
   #UTILs_is_action_authorized "${HTTP_COOKIE#token=}"
   if test -f ${SETTING_PATH}; then
-     utils_post_data arr
-     IFS="," read key value <<< $(sed 's/\["\(.*\)"\]\t"\(.*\)"/\1,\2/' <<< ${arr[0]})
-     section="{\"section\":\"${value}\",\"setting_list\":["
-     setting="${value}"
-     pos=$(sed -n "/\[$setting\]/{=;q;}" "$SETTING_PATH")
-     if [ -n "${key}" ] && [ "${pos}" -gt 0 ]; then
+     json_str=$(echo "$POST_DATA" | ./json.sh -l) # parse post  
+     IFS=","; set -- $(echo $json_str | head -1 | sed 's/\["\(.*\)"\]\t"\(.*\)"/\1,\2/') 
+     json_str="{\"section\":\"${2}\",\"setting_list\":["
+     pos=$(sed -n "/\[$2\]/{=;q;}" "$SETTING_PATH")
+     section="$2"
+echo "sect: $section 1: $1 2: $2" >> debug
+     if [ -n "$1" ] && [ "${pos}" -gt 0 ]; then # section exists
+
         get_section_all ars "$setting"
-        delete_line_all ${ars[@]}
+        #delete_line_all ${ars[@]}
         lln=$(wc -l < $SETTING_PATH)
-        for (( i=1; i<${#arr[@]}; i+=3)); do
-          for (( j=0; j<3; j++)); do
-            IFS="," read key value <<< $(sed 's/^.*,"\(.*\)"\]\t"\(.*\)"$/\1,\2/' <<< ${arr[i+j]})
-	    case $(( $j % 3 )) in
-	       0) arr[0]=${value};;
-	       1) arr[1]=${value};;
-            esac
-          done
-          (( pos++ ))
-          if [ "$pos" -lt "$lln" ]; then
-            sed -i "${pos}i ${arr[0]}=${arr[1]}" "$SETTING_PATH"
-            section="${section}{\"key\":\"${arr[0]}\",\"value\":\"${arr[1]}\",\"line\":\"${pos}\"},"
-	  else
-            (( lln++ ))
-	    pos=${lln}
-            echo "${arr[0]}=${arr[1]}" >> "$SETTING_PATH"
-            section="${section}{\"key\":\"${arr[0]}\",\"value\":\"${arr[1]}\",\"line\":\"${pos}\"},"
-	  fi
-        done
         utils_content_json
         echo "${section%?}]}"
      else
-        utils_print_error "Status: 400 Bad Request" "Error: Section does not exist."
+         utils_print_error "Status: 400 Bad Request" "Error: Section: \"$section\" does not exist."
      fi
   else
-     utils_print_error "Status: 404 Not Found" "Error: Settings file not found."
+     utils_print_error "Status: 404 Not Found" "Error: file: \"$SETTING_PATH\" not found."
   fi
 }  
 
-# Change value of a line in a section
-on_line_patch() {
-  #UTILs_is_action_authorized "${HTTP_COOKIE#token=}"
-  if test -f ${SETTING_PATH}; then
-     utils_post_data arr
-     IFS="," read key value <<< $(sed 's/\["\(.*\)"\]\t"\(.*\)"/\1,\2/' <<< ${arr[0]})
-     section="{\"section\":\"${value}\",\"setting_list\":["
-     setting="${value}"
-     for (( i=1; i<${#arr[@]}; i+=3)); do
-       for (( j=0; j<3; j++)); do
-         IFS="," read key value <<< $(sed 's/^.*,"\(.*\)"\]\t"\(.*\)"$/\1,\2/' <<< ${arr[i+j]})
-	 case $(( $j % 3 )) in
-	    0) ars[0]=${value};;
-	    1) ars[1]=${value};;
-         esac
-       done
-       line=$(get_section_line "${setting}" "${ars[0]}")
-       IFS="=" read key value line <<< "$line"
-       if [ -n "${key}" ] && [ -n "${value}" ]; then
-          sed -i "${line} s/.*/${ars[0]}=${ars[1]}/" "$SETTING_PATH"
-	  section="${section}{\"key\":\"${ars[0]}\",\"value\":\"${ars[1]}\",\"line\":\"${line}\"},"
-       else
-          utils_print_error "Status: 400 Bad Request" "Error: line does not exist."
-       fi
-     done
-     utils_content_json
-     echo "${section%?}]}"
-  else
-     utils_print_error "Status: 404 Not Found" "Error: Settings file not found."
-  fi
-}
-
-# Delete a line in a section 
+# Delete line 
 on_line_delete() {
   #UTILs_is_action_authorized "${HTTP_COOKIE#token=}"
   if test -f ${SETTING_PATH}; then
-     utils_post_data arr
-     IFS="," read key value <<< $(sed 's/\["\(.*\)"\]\t"\(.*\)"/\1,\2/' <<< ${arr[0]})
-     section="{\"section\":\"${value}\",\"setting_list\":["
-     setting="${value}"
-     for (( i=1; i<${#arr[@]}; i+=3)); do
-       for (( j=0; j<3; j++)); do
-         IFS="," read key value <<< $(sed 's/^.*,"\(.*\)"\]\t"\(.*\)"$/\1,\2/' <<< ${arr[i+j]})
-	 case $(( $j % 3 )) in
-	    0) ars[0]=${value};;
-	    1) ars[1]=${value};;
-         esac
-       done
-       line=$(get_section_line "${setting}" "${ars[0]}")
-       IFS="=" read key value pos <<< "$line"
-       if [ -n "${key}" ] && [ -n "${value}" ]; then
-	  sed -i "${pos}d" "${SETTING_PATH}" 
-	  section="${section}{\"key\":\"${key}\",\"value\":\"${value}\",\"line\":\"${pos}\"},"
-       else
-          utils_print_error "Status: 400 Bad Request" "Error: line does not exist."
-       fi
-     done
-     utils_content_json
-     echo "${section%?}]}"
+      setting=$(echo "$POST_DATA" | ./json.sh -l) # parse post  
+      IFS=","; set -- $(echo "$setting" | head -1 | sed 's/\["\(.*\)"\]\t"\(.*\)"/\1,\2/') 
+      json_str="{\"section\":\"${2}\",\"setting_list\":["
+      pos=$(sed -n "/\[$2\]/{=;q;}" "$SETTING_PATH")
+      section="$2"
+      cnt=0
+      if [ -n "$pos" ]; then # section exists
+         echo $(echo "$setting" | awk 'NR>1') | { while read line; do
+            cnt=`expr $cnt + 1`
+            if [ `expr $cnt % 3` -eq 1 ]; then
+               set -- $(echo $line | sed 's/^.* [0-9] "\([a-zA-Z]*\)"\]\t"\([a-zA-Z:0-9]*\)"$/\1,\2/') 
+                  data="$data$2,"
+            fi
+         done
+	 for key in ${data%,}; do
+            line=$(get_section_line "$section" "$key")
+            if [ -n "$line" ]; then
+               OIFS=$IFS;IFS="="; set -- $line
+               json_str="${json_str}{\"key\": \"${1}\", \"value\": \"${2}\", \"line\": \"${3}\"},"
+               IFS=$OIFS
+            fi
+         done 
+	 for key in ${data%,}; do
+            line=$(get_section_line "$section" "$key")
+            if [ -n "$line" ]; then
+               OIFS=$IFS;IFS="="; set -- $line
+               sed -i "${3}d" "${SETTING_PATH}"
+               IFS=$OIFS
+            else
+               utils_print_error "Status: 400 Bad Request" "Error: key: \"$key\" does not exist."
+            fi
+         done
+         utils_content_json
+         echo "$json_str"
+         }
+      else
+         utils_print_error "Status: 400 Bad Request" "Error: Section: \"$section\" does not exist."
+      fi
   else
-     utils_print_error "Status: 404 Not Found" "Error: Settings file not found."
+     utils_print_error "Status: 404 Not Found" "Error: file: \"$SETTING_PATH\" not found."
   fi
 }
 
-# Delete a section 
+# Delete section 
 on_section_delete() {
-  #UTILs_is_action_authorized "${HTTP_COOKIE#token=}"
+  #UTILs_is_action_authorized "${HTTP_COOKIE#token=
   if test -f ${SETTING_PATH}; then
-     utils_post_data arr
-     IFS="," read key value <<< $(sed 's/\["\(.*\)"\]\t"\(.*\)"/\1,\2/' <<< ${arr[0]})
-     section="{\"section\":\"${value}\",\"setting_list\":["
-     setting="${value}"
-     if grep -q "\[$setting\]" "$SETTING_PATH"; then
-        get_section_all ars "$setting"
-        if [ ${#ars[@]} -gt 0 ]; then
-           delete_line_all ${ars[@]}
-        fi
-        sed -i "/\[${setting}\]/d" "${SETTING_PATH}"
-        for (( i=0; i<${#ars[@]}; i++ )); do
-           IFS="=" read key value line <<< "${ars[i]}"
-           section="${section}{\"key\":\"${key}\",\"value\":\"${value}\",\"line\":\"${line}\"},"
-        done
-        utils_content_json
-        echo "${section%?}]}"
-     else
-        utils_print_error "Status: 400 Bad Request" "Error: Section does not exist."
-     fi
+      json_str=$(echo "$POST_DATA" | ./json.sh -l) # parse post  
+      IFS=","; set -- $(echo $json_str | head -1 | sed 's/\["\(.*\)"\]\t"\(.*\)"/\1,\2/') 
+      json_str="{\"section\":\"${2}\",\"setting_list\":["
+      pos=$(sed -n "/\[$2\]/{=;q;}" "$SETTING_PATH")
+      cnt=$pos
+      section="$2"
+      if [ -n "$pos" ]; then # section exists
+         echo $(sed -n "/\[$section\]/,/\[/p" "$SETTING_PATH" | grep -v "\[[A-Z]*[a-z]*\]") | { 
+         while read line; do
+            cnt=`expr $cnt + 1`
+            OIFS=$IFS;IFS="="; set -- $line
+            json_str="${json_str}{\"key\": \"${1}\", \"value\": \"${2}\", \"line\": \"${cnt}\"},"
+            IFS=$OIFS
+         done 
+         sed -i "${pos},${cnt}d" "${SETTING_PATH}" 
+         utils_content_json
+         echo "${json_str%,}]"
+         } 
+      else
+         utils_print_error "Status: 400 Bad Request" "Error: Section: \"$section\" does not exist."
+      fi
   else
-     utils_print_error "Status: 404 Not Found" "Error: Settings file not found."
+     utils_print_error "Status: 404 Not Found" "Error: file: \"$SETTING_PATH\" not found."
   fi
 }
 
 echo "qs: $QUERY_STRING" > debug
+echo "req: $REQUEST_METHOD" >> debug
 
 # Parse Request
 if [ -z $QUERY_STRING ]; then
@@ -364,46 +316,46 @@ else
     set -- $QUERY_STRING
     key="${1%=*}"
     if [ "$REQUEST_METHOD" = "GET" ]; then
-       if [ ${key} == "section" -a "${2%=*}" == "line" ]; then
+       if [ ${key} = "section" -a "${2%=*}" = "line" ]; then
 	  on_line_read "${1#*=}" "${2#*=}" 
-       elif [ ${key} == "section" ]; then
+       elif [ ${key} = "section" ]; then
           on_section_read "${1#*=}"
        else
           utils_print_error "Status: 421 Misdirected Request" "Use only line, section or null."
        fi
     elif [ "$REQUEST_METHOD" = "POST" ]; then
-       if [[ "$CONTENT_LENGTH" -gt 0 && "$CONTENT_TYPE" == *"application/json"* ]]; then
-          read -n $CONTENT_LENGTH POST_DATA <&0
+       if [ "$CONTENT_LENGTH" -gt 0 ] && [ -z "${CONTENT_TYPE##*"application/json"*}" ]; then
+          POST_DATA=`cat /dev/stdin`
           case ${key} in
           put)
-              if [ ${1#*=} == "line" ]; then
+              if [ ${1#*=} = "line" ]; then
                  on_line_put 
-              elif [ ${1#*=} == "section" ]; then
+              elif [ ${1#*=} = "section" ]; then
                  on_section_put 
               else
                  utils_print_error "Status: 421 Misdirected Request" "Use only line, section or file."
               fi
             ;;
           post)
-	     if [ ${1#*=} == "line" ]; then
+	     if [ ${1#*=} = "line" ]; then
                 on_line_post "${2#*=}" 
-	     elif [ ${1#*=} == "section" ]; then
+	     elif [ ${1#*=} = "section" ]; then
                 on_section_post "${2#*=}"
              else
                utils_print_error "Status: 421 Misdirected Request" "Use only line, section or null."
              fi
             ;;
           patch)
-              if [ ${1#*=} == "line" ]; then
+              if [ ${1#*=} = "line" ]; then
                  on_line_patch 
               else
                  utils_print_error "Status: 421 Misdirected Request" "Use only line"
               fi
             ;;
           delete)
-              if [ ${1#*=} == "line" ]; then
+              if [ ${1#*=} = "line" ]; then
                  on_line_delete
-              elif [ ${1#*=} == "section" ]; then
+              elif [ ${1#*=} = "section" ]; then
                  on_section_delete
               else
                  utils_print_error "Status: 421 Misdirected Request" "Use only line."

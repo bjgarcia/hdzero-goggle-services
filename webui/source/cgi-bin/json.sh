@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/ash
 
 throw() {
   echo "$*" >&2

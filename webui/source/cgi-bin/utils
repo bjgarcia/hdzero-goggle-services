@@ -35,26 +35,6 @@ utils_has_string() {
     fi
 }
 
-# Returns all lines of posted data in array refernce
-utils_post_data(){
-   local -n arr_ref="$1"
-   while read ln; do
-      #echo "from json.sh: $ln" >> debug
-      arr_ref+=("$ln")
-   done < <(./json.sh -l <<< $POST_DATA)
-}
-
-# Limit actions to SD card and remove bad charaters 
-utils_clean_path(){
-   local path=$(sed 's/[^a-zA-Z0-9\/._-]//g' <<< "$1") #remove glob characters
-   local file=$(basename "$path")
-   path=$(dirname "$path")
-   path="${path#*$SDC_PATH}" #remove base path
-   path=$(sed 's~[^[:alnum:]/]\+~~g' <<< "$path") #remove periods from path only
-   path="$SDC_PATH/$path/$file" #put it back together
-   path=$(echo "$path" | tr -s / ) #remove duplicate backslashes
-   echo $path
-}
 
 # Transfer binary file to client
 utils_send_binary_file() {
