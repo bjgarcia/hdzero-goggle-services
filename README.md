@@ -2,10 +2,10 @@ HDZGOGGLE Web UI and API
 A Web UI and Web API that leverages SumolX's work on services for the HDZero goggles.  
 
 ## Services
-These services allow applications to access and update the SD card and goggle settings. Goggle settings are changed in the file that is used to persist goggle settings. The changes will be loaded on reboot. The BusyBox Web Server only supports Get and Post methods. Other methods, when needed are represented with the URI. Server errors are returned as primary in the reponse header. API errors are returned as misscellaneous in the header. Errors and messages are returned as plain text in the body of the response. I will implement a login but security is going to be a issue becuase the web server currently does not support HTTPS. Any one with access to your net work could gain access to your goggle settings. Don't give anyone access to your goggle network. 
+These services allow applications to access and update the SD card and goggle settings. Goggle settings are saved in file and loaded on reboot. The BusyBox Web Server only supports Get and Post methods. Other methods, when needed are represented with the URI. Server errors are returned as primary in the reponse header. API errors are returned as misscellaneous in the header. Errors and messages are returned as plain text in the body of the response. A login is required to use sevices but the web server currently does not support HTTPS. Any one with access to your network could gain access to your goggle settings. Don't give anyone access to your goggle network. 
 
 ## Settings Api
-The first section of the settings file must not be changed. The goggle will reset the entire file if it is missing. Changes to the Settings file are loaded on the next goggle reboot.
+The first section of the settings file must not be changed. The goggle will reset the entire file to defaults if it is missing.
 
 ### Get Methods
 Get a line or lines from a section by name, or get all sections.
@@ -20,7 +20,7 @@ Get a line or lines from a section by name, or get all sections.
 ```
 
 ### Post Methods
-Create new lines or a new section after the line or section provided in the URI given. Or create new lines or a new section at the end of the section or the end of file if no line or section is provided in the URI. If lines or section exists a error will be returned. Lines that don't exits will be created in existing section. Takes a JSON Section object with one or more Lines. Returns the inserted section.
+Create new lines or a new section after the line or section provided in the URI given. Or create new lines or a new section at the end of the section or the end of file if no line or section is provided in the URI. If lines or section exists a error will be returned. Lines that don't exits will be created in existing section. Takes a JSON Section object with one or more Lines. Returns the section that remains after insert.
 
 ```
 /cgi-bin/setting?post=line
